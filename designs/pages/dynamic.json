@@ -1,0 +1,199 @@
+[
+    {
+        "id": "sd_Eal1ZP7AzS4w8ZuL",
+        "type": "tab",
+        "createdDate": "2022-06-26T16:04:27.186Z",
+        "label": "dynamic",
+        "disabled": false,
+        "info": "",
+        "functionSeq": 0,
+        "generateNext": true,
+        "serviceName": "dynamicComponent"
+    },
+    {
+        "id": "sd_lRTLtUaG1rCFZdvg",
+        "type": "OnInit",
+        "z": "sd_Eal1ZP7AzS4w8ZuL",
+        "viewType": "common",
+        "nodeType": "start",
+        "name": "",
+        "inputVariables": [],
+        "localVariables": [],
+        "outputVariables": [],
+        "functionName": "sd_lRTLtUaG1rCFZdvg",
+        "category": "Lifecycle Events",
+        "x": 30,
+        "y": 30,
+        "wires": [
+            [
+                "sd_EnmeHZJ3mahtbLmo"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": true,
+        "serviceName": "dynamicComponent"
+    },
+    {
+        "id": "sd_EnmeHZJ3mahtbLmo",
+        "type": "PageVariables",
+        "z": "sd_Eal1ZP7AzS4w8ZuL",
+        "viewType": "pages",
+        "nodeType": "flow",
+        "name": "",
+        "inputs": 1,
+        "outputs": 1,
+        "operation": "set",
+        "globalVariables": [
+            {
+                "textIp": "userDetails",
+                "typedIpValue": {
+                    "type": "literal",
+                    "value": "[]"
+                }
+            }
+        ],
+        "functionName": "sd_EnmeHZJ3mahtbLmo",
+        "category": "Function",
+        "x": 180,
+        "y": 30,
+        "wires": [
+            [
+                "sd_QsV4RtGoriuE3dyz"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    },
+    {
+        "id": "sd_JHAhJCB9YvSzwdeO",
+        "type": "Script",
+        "z": "sd_Eal1ZP7AzS4w8ZuL",
+        "viewType": "common",
+        "nodeType": "flow",
+        "name": "",
+        "script": "page.userDetails = [\n    { id: \"Firstname\", label: \"Firstname\", types: \"text\" },\n    { id: \"Lastname\", label: \"Lastname\", types: \"text\" },\n    { id: \"Number\", label: \"Phone Number\", types: \"number\" },\n    { id: \"Email\", label: \"Email\", types: \"email\" },\n    { id: \"Nationality\", label: \"Nationality\", types: \"text\" }\n];\n// page.form={\n\n// }\npage.myForm = new FormGroup({\n    Firstname: new FormControl(''),\n    Lastname: new FormControl(''),\n    Number: new FormControl(''),\n    Email: new FormControl(''),\n    Nationality: new FormControl('')\n});\n// page.name = new FormControl('niyas');",
+        "functionName": "sd_JHAhJCB9YvSzwdeO",
+        "category": "Function",
+        "x": 465,
+        "y": 40,
+        "wires": [
+            []
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    },
+    {
+        "id": "sd_SdF4GS01eegkdTNI",
+        "type": "PageStart",
+        "z": "sd_Eal1ZP7AzS4w8ZuL",
+        "viewType": "pages",
+        "nodeType": "start",
+        "name": "start",
+        "outputs": 1,
+        "inputVariables": [],
+        "localVariables": [],
+        "flow_type": "sync",
+        "functionName": "start",
+        "category": "General",
+        "x": 65,
+        "y": 280,
+        "wires": [
+            [
+                "sd_2vwmyldhrbs75JgU"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": true,
+        "serviceName": "dynamicComponent"
+    },
+    {
+        "id": "sd_2vwmyldhrbs75JgU",
+        "type": "Log",
+        "z": "sd_Eal1ZP7AzS4w8ZuL",
+        "viewType": "client-pages",
+        "nodeType": "flow",
+        "name": "display",
+        "outputs": 0,
+        "logObject": "this.page.myForm.value",
+        "functionName": "display",
+        "category": "General",
+        "x": 225,
+        "y": 280,
+        "wires": [],
+        "__ssdTypeInputs__": {
+            "logObject": {
+                "type": "this.page",
+                "value": "myForm.value",
+                "constant": false
+            }
+        },
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    },
+    {
+        "id": "sd_QsV4RtGoriuE3dyz",
+        "type": "UseDependency",
+        "z": "sd_Eal1ZP7AzS4w8ZuL",
+        "viewType": "client-pages",
+        "nodeType": "flow",
+        "name": "",
+        "inputs": 1,
+        "outputs": 1,
+        "property": "",
+        "propertyType": "bh",
+        "propertyGv": "bh.",
+        "alias": "",
+        "modules": [
+            {
+                "textIp": "FormBuilder",
+                "typedIpValue": {
+                    "type": "this.page",
+                    "value": "fb"
+                },
+                "injectable": true
+            },
+            {
+                "textIp": "Validators",
+                "typedIpValue": {
+                    "type": "this.page",
+                    "value": "Validators"
+                },
+                "injectable": false
+            },
+            {
+                "textIp": "FormGroup",
+                "typedIpValue": {
+                    "type": "this.page",
+                    "value": ""
+                },
+                "injectable": false
+            },
+            {
+                "textIp": "ReactiveFormsModule",
+                "typedIpValue": {
+                    "type": "this.page",
+                    "value": ""
+                },
+                "injectable": false
+            }
+        ],
+        "import_all": false,
+        "library": "@angular/forms",
+        "serviceDesignerType": "pages",
+        "functionName": "sd_QsV4RtGoriuE3dyz",
+        "category": "Function",
+        "x": 325,
+        "y": 40,
+        "wires": [
+            [
+                "sd_JHAhJCB9YvSzwdeO"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    }
+]

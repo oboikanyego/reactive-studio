@@ -1,0 +1,84 @@
+[
+    {
+        "id": "sd_3V9JXvJfxw2H9kDq",
+        "type": "tab",
+        "createdDate": "2022-06-26T15:19:10.351Z",
+        "label": "navBar",
+        "disabled": false,
+        "info": "",
+        "functionSeq": 0,
+        "generateNext": true,
+        "serviceName": "navBarComponent"
+    },
+    {
+        "id": "sd_5f8LgW3ntOELHS3I",
+        "type": "OnInit",
+        "z": "sd_3V9JXvJfxw2H9kDq",
+        "viewType": "common",
+        "nodeType": "start",
+        "name": "",
+        "functionName": "sd_5f8LgW3ntOELHS3I",
+        "category": "Lifecycle Events",
+        "x": 30,
+        "y": 30,
+        "wires": [
+            [
+                "sd_Qf3fRlL0uSOSUZTK"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": true,
+        "serviceName": "navBarComponent"
+    },
+    {
+        "id": "sd_Qf3fRlL0uSOSUZTK",
+        "type": "PageVariables",
+        "z": "sd_3V9JXvJfxw2H9kDq",
+        "viewType": "pages",
+        "nodeType": "flow",
+        "name": "",
+        "inputs": 1,
+        "outputs": 1,
+        "operation": "set",
+        "globalVariables": [
+            {
+                "textIp": "nav",
+                "typedIpValue": {
+                    "type": "literal",
+                    "value": ""
+                }
+            }
+        ],
+        "functionName": "sd_Qf3fRlL0uSOSUZTK",
+        "category": "Function",
+        "x": 180,
+        "y": 30,
+        "wires": [
+            [
+                "sd_Cy5NsdC0gaF5Gcmj"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    },
+    {
+        "id": "sd_Cy5NsdC0gaF5Gcmj",
+        "type": "Script",
+        "z": "sd_3V9JXvJfxw2H9kDq",
+        "viewType": "common",
+        "nodeType": "flow",
+        "name": "",
+        "script": "page.nav=[\"About Us\",\"Services\",\"Contact Us\"]",
+        "functionName": "sd_Cy5NsdC0gaF5Gcmj",
+        "category": "Function",
+        "x": 340,
+        "y": 40,
+        "wires": [
+            []
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    }
+]

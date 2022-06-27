@@ -1,0 +1,55 @@
+[
+    {
+        "id": "sd_pWhNjD0jMArnH7Bt",
+        "type": "tab",
+        "createdDate": "2022-06-26T19:56:23.487Z",
+        "label": "templateDrivernForm",
+        "disabled": false,
+        "info": "",
+        "functionSeq": 0,
+        "generateNext": true,
+        "serviceName": "templateDrivernFormComponent"
+    },
+    {
+        "id": "sd_dkHmcSdr2BRV6MYA",
+        "type": "OnInit",
+        "z": "sd_pWhNjD0jMArnH7Bt",
+        "viewType": "common",
+        "nodeType": "start",
+        "name": "",
+        "functionName": "sd_dkHmcSdr2BRV6MYA",
+        "category": "Lifecycle Events",
+        "x": 65,
+        "y": 80,
+        "wires": [
+            [
+                "sd_fVMbPWzRTT4Tpfa6"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": true,
+        "serviceName": "templateDrivernFormComponent"
+    },
+    {
+        "id": "sd_fVMbPWzRTT4Tpfa6",
+        "type": "PageVariables",
+        "z": "sd_pWhNjD0jMArnH7Bt",
+        "viewType": "pages",
+        "nodeType": "flow",
+        "name": "",
+        "inputs": 1,
+        "outputs": 1,
+        "operation": "set",
+        "globalVariables": [],
+        "functionName": "sd_fVMbPWzRTT4Tpfa6",
+        "category": "Function",
+        "x": 215,
+        "y": 80,
+        "wires": [
+            []
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    }
+]

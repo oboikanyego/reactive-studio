@@ -1,0 +1,27 @@
+{
+    "classes": [
+        "heightfull",
+        "fullwidth",
+        "height60px",
+        "backgroundgray",
+        "backgroundgrey",
+        "borderRadi80px",
+        "borderRadiBlack",
+        "width95",
+        "mat-raised-button",
+        "mat-accent",
+        "font18px",
+        "height80px",
+        "bodyheight",
+        "marginbody",
+        "mat-form-field-appearance-outline",
+        "mat-form-field-wrapper",
+        "mat-form-field",
+        "mat-form-field-subscript-wrapper",
+        "mat-form-field-infix",
+        "mat-form-field-flex",
+        "mat-form-field-appearance-legacy",
+        "mat-form-field-suffix",
+        "mat-icon-button"
+    ]
+}

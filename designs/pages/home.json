@@ -1,0 +1,84 @@
+[
+    {
+        "id": "sd_hopqM5zhb1RRCLek",
+        "type": "tab",
+        "createdDate": "2022-06-26T15:07:13.594Z",
+        "label": "home",
+        "disabled": false,
+        "info": "",
+        "functionSeq": 0,
+        "generateNext": true,
+        "serviceName": "homeComponent"
+    },
+    {
+        "id": "sd_pn82mUzeBnJDPbqY",
+        "type": "OnInit",
+        "z": "sd_hopqM5zhb1RRCLek",
+        "viewType": "common",
+        "nodeType": "start",
+        "name": "",
+        "functionName": "sd_pn82mUzeBnJDPbqY",
+        "category": "Lifecycle Events",
+        "x": 30,
+        "y": 30,
+        "wires": [
+            [
+                "sd_1mwJWEthxhAflhew"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": true,
+        "serviceName": "homeComponent"
+    },
+    {
+        "id": "sd_1mwJWEthxhAflhew",
+        "type": "PageVariables",
+        "z": "sd_hopqM5zhb1RRCLek",
+        "viewType": "pages",
+        "nodeType": "flow",
+        "name": "",
+        "inputs": 1,
+        "outputs": 1,
+        "operation": "set",
+        "globalVariables": [
+            {
+                "textIp": "labels",
+                "typedIpValue": {
+                    "type": "literal",
+                    "value": ""
+                }
+            }
+        ],
+        "functionName": "sd_1mwJWEthxhAflhew",
+        "category": "Function",
+        "x": 180,
+        "y": 30,
+        "wires": [
+            [
+                "sd_z3AUbyI5kquplM2F"
+            ]
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    },
+    {
+        "id": "sd_z3AUbyI5kquplM2F",
+        "type": "Script",
+        "z": "sd_hopqM5zhb1RRCLek",
+        "viewType": "common",
+        "nodeType": "flow",
+        "name": "",
+        "script": "page.labels = [\"User Details\",\n\"User Address\",\"Select Service\"\n,\"View Application\",\n\"Request Quote\"];",
+        "functionName": "sd_z3AUbyI5kquplM2F",
+        "category": "Function",
+        "x": 320,
+        "y": 40,
+        "wires": [
+            []
+        ],
+        "__n_excludedFromValidation__": {},
+        "generateNext": false,
+        "generated": true
+    }
+]
