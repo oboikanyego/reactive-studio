@@ -1,0 +1,11 @@
+<div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false">
+    <div>
+      <bh-pageheader [data]="&apos;reports&apos;"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"></div>
+  </div>
+  <div fxLayout="column wrap" class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <router-outlet></router-outlet>
+  </div>
+</div>

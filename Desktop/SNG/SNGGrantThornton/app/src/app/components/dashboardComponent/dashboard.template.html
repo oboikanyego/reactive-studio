@@ -1,0 +1,59 @@
+<div fxLayout="column wrap" class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;dashboard&apos;"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"></div>
+  </div>
+  <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole !== &apos;admin&apos;">
+    <div>
+      <table style="margin-top: 15px" mat-table class="schedulesListTable" [dataSource]="dataSource" matSort>
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Schedule Name </th>
+          <td mat-cell *matCellDef="let table"> {{table.name}} </td>
+        </ng-container>
+
+        <!-- Quarter Column -->
+        <ng-container matColumnDef="quarter">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Quarter </th>
+          <td mat-cell *matCellDef="let table"> {{table.quarter}} </td>
+        </ng-container>
+
+        <!-- Nominated To Column -->
+        <ng-container matColumnDef="nominatedTo">
+          <th mat-header-cell *matHeaderCellDef> Nominated To </th>
+          <td mat-cell *matCellDef="let table"> {{table.nominatedTo}} </td>
+        </ng-container>
+
+        <!-- Closing Date Column -->
+        <ng-container matColumnDef="closingDate">
+          <th mat-header-cell *matHeaderCellDef> Closing Date </th>
+          <td mat-cell *matCellDef="let table">
+            <span>{{table.closingDate | date : &apos;dd-MM-yyyy&apos;}}</span>
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+          <td mat-cell *matCellDef="let table">
+            <span class="status-{{table[&apos;status&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;outstanding&apos; : &apos;completed&apos;}}">
+            {{table[&apos;status&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;Outstanding&apos; : &apos;Completed&apos;}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+          <td mat-cell *matCellDef="let table"> </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let table; columns: displayedColumns;" class="schedulesListTableTR" (click)="scheduleClicked(table)">
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

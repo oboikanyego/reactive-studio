@@ -1,0 +1,142 @@
+<div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading">
+  <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+</div>
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;reports&apos;" [reportName]="&apos;Reports by schedule&apos;" [reportLink]="&apos;/home/reports/scheduleReport&apos;" [fyear]="curQuarter"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput reportsInputs" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <bh-quarterselection></bh-quarterselection>
+      <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+        <mat-select placeholder="Schedule" [(ngModel)]="curSchedule" [required]="false" (selectionChange)="scheduleChange()">
+          <ng-template ngFor let-scheduleName [ngForOf]="getPayload[&apos;scheduleNames&apos;]" let-i="index">
+            <mat-option [value]="scheduleName">{{scheduleName}}</mat-option>
+          </ng-template>
+        </mat-select>
+
+      </mat-form-field>
+      <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+        <mat-select placeholder="By Director" [(ngModel)]="scheduleByDirector" [required]="false" multiple (selectionChange)="scheduleByDirectorFn()">
+          <ng-template ngFor let-director [ngForOf]="getPayload[&apos;registeredusers&apos;]" let-i="index">
+            <mat-option [value]="director.displayName">{{director.displayName}}</mat-option>
+          </ng-template>
+        </mat-select>
+
+      </mat-form-field>
+      <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" (click)="download()" color="primary">cloud_download</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="column wrap" class="noDataFoundDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="!schedulesFormattedOutput[curSchedule]">
+    <h3>
+      No Data Found for this schedule - &apos;{{curSchedule}}&apos;</h3>
+  </div>
+  <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="schedulesFormattedOutput[curSchedule]">
+    <h3 style="margin-bottom: 5px; color: #7950a1;">
+      {{curSchedule}}
+    </h3>
+    <div fxLayout="column wrap" class="scheduleCols" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <div *ngIf="schedulesFormatted[curSchedule]">
+        <table style="width: 100%" mat-table id="downloadTable" class="scheduleReportTable" [dataSource]="dataSource" matSort>
+          <ng-container *ngFor="let columnName of schedulesFormatted[curSchedule].columnsDef; let colIndex = index">
+
+            <ng-container matColumnDef="{{columnName}}" *ngIf="columnName == &apos;action&apos;">
+              <th class mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+
+              <ng-container *matCellDef="let table; let rowIndex = index">
+                <td [attr.rowspan]="directorsArr[curSchedule][table.email].rowSpan" class="scheduleOutputLabel" mat-cell *ngIf="table[columnName] !== undefined">
+                  <mat-icon matTooltip="Save data" (click)="saveSchedule(table)" class="addBTNLabels reportSaveBTN cursorHand " style="margin-right: 15px;font-size: 22px;color: #aaa">save</mat-icon>
+                </td>
+              </ng-container>
+            </ng-container>
+
+            <ng-container matColumnDef="{{columnName}}" *ngIf="columnName == &apos;director&apos;">
+              <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header> Director </th>
+              <!--<td [attr.rowspan]="directorsArr[curSchedule][table.email].rowSpan" class="columnsDefLabel scheduleOutputLabel" mat-cell *matCellDef="let table;">-->
+              <ng-container *matCellDef="let table; let rowIndex = index">
+                <td [attr.rowspan]="directorsArr[curSchedule][table.email].rowSpan" class="columnsDefLabel scheduleOutputLabel" mat-cell *ngIf="table[columnName]">
+                  {{table[columnName]}}
+                </td>
+              </ng-container>
+            </ng-container>
+
+            <ng-container matColumnDef="{{columnName}}" *ngIf="columnName !== &apos;director&apos; &amp;&amp; columnName !== &apos;action&apos;">
+              <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header> {{columnName}} </th>
+              <td class="columnsDefLabel scheduleOutputLabel scheduleReportCell" mat-cell *matCellDef="let table; let rowIndex = index">
+                <ng-container *ngIf="displayColsTypes[curSchedule] &amp;&amp; 
+                      displayColsTypes[curSchedule][(colIndex - diffCol)] &amp;&amp;
+                      displayColsTypes[curSchedule][(colIndex - diffCol)].type == &apos;prePopulate&apos;">
+                  {{table[columnName]}}
+                </ng-container>
+                <ng-container *ngIf="displayColsTypes[curSchedule] &amp;&amp; 
+                      displayColsTypes[curSchedule][(colIndex - diffCol)] &amp;&amp;
+                      displayColsTypes[curSchedule][(colIndex - diffCol)].type == &apos;dropDown&apos;">
+                  <mat-form-field class="scheduleRowDP">
+                    <mat-select [(ngModel)]="table[columnName]">
+                      <mat-option *ngFor="let option of displayColsTypes[curSchedule][(colIndex - diffCol)].value" [value]="option">
+                        {{option}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </ng-container>
+                <ng-container *ngIf="displayColsTypes[curSchedule] &amp;&amp; 
+                      displayColsTypes[curSchedule][(colIndex - diffCol)] &amp;&amp;
+                      displayColsTypes[curSchedule][(colIndex - diffCol)].type == &apos;freeForm&apos; &amp;&amp;
+                      displayColsTypes[curSchedule][(colIndex - diffCol)].defaultValue">
+                  <!--{{table[columnName]}} -->
+                  <mat-form-field class="scheduleRowDP">
+                    <input matInput placeholder [(ngModel)]="table[columnName]" (keyup)="validateInput(table, columnName, rowIndex, colIndex, $event)" type="{{displayColsTypes[curSchedule][(colIndex - diffCol)].validData ?
+                    displayColsTypes[curSchedule][(colIndex - diffCol)].validData : &apos;text&apos; }}">
+                  </mat-form-field>
+                  <span hidden>{{table[columnName]}}</span>
+                </ng-container>
+                <ng-container *ngIf="displayColsTypes[curSchedule] &amp;&amp; 
+                      displayColsTypes[curSchedule][(colIndex - diffCol)] &amp;&amp;
+                      displayColsTypes[curSchedule][(colIndex - diffCol)].type == &apos;freeForm&apos; &amp;&amp;
+                      !displayColsTypes[curSchedule][(colIndex - diffCol)].defaultValue &amp;&amp;
+                      !displayColsTypes[curSchedule][(colIndex - diffCol)].dependOn">
+                  <!--{{table[columnName]}} -->
+                  <mat-form-field class="scheduleRowDP">
+                    <input matInput placeholder [(ngModel)]="table[columnName]" (keyup)="validateInput(table, columnName, rowIndex, colIndex, $event)" type="{{displayColsTypes[curSchedule][(colIndex - diffCol)].validData ?
+                    displayColsTypes[curSchedule][(colIndex - diffCol)].validData : &apos;text&apos; }}">
+                  </mat-form-field>
+                  <span hidden>{{table[columnName]}}</span>
+                </ng-container>
+                <ng-container *ngIf="displayColsTypes[curSchedule] &amp;&amp;
+                    displayColsTypes[curSchedule][(colIndex - diffCol)] &amp;&amp;
+                    displayColsTypes[curSchedule][(colIndex - diffCol)].type == &apos;freeForm&apos; &amp;&amp;
+                    displayColsTypes[curSchedule][(colIndex - diffCol)].dependOn">
+                  <!--{{table[columnName]}} -->
+                  <mat-form-field class="scheduleRowDP">
+                    <input matInput placeholder [(ngModel)]="table[columnName]" (keyup)="validateInput(table, columnName, rowIndex, colIndex, $event)" type="{{displayColsTypes[curSchedule][(colIndex - diffCol)].validData ?
+                    displayColsTypes[curSchedule][(colIndex - diffCol)].validData : &apos;text&apos; }}" disabled="{{displayColsTypes[curSchedule][(colIndex - diffCol)].dependOn &amp;&amp;
+                    schedulesFormattedOutput[curSchedule][rowIndex][displayColsTypes[curSchedule][(colIndex - diffCol)].dependOn] !== 
+                    displayColsTypes[curSchedule][(colIndex - diffCol)].dependValue}}">
+                  </mat-form-field>
+                  <span hidden>{{table[columnName]}}</span>
+                </ng-container>
+                <ng-container *ngIf="displayColsTypes[curSchedule] &amp;&amp; 
+                      displayColsTypes[curSchedule][(colIndex - diffCol)] &amp;&amp;
+                      displayColsTypes[curSchedule][(colIndex - diffCol)].type == &apos;datePicker&apos;">
+                  <!--{{table[columnName] | date : 'dd-MM-yyyy'}} -->
+                  <div class="columnsDefLabel">
+                    <mat-form-field class="scheduleRowDP">
+                      <input matInput disabled [matDatepicker]="colIndex" placeholder [(ngModel)]="table[columnName]">
+                      <mat-datepicker-toggle matSuffix [for]="colIndex"></mat-datepicker-toggle>
+                      <mat-datepicker #colIndex disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                    <span hidden>{{table[columnName]}}</span>
+                  </div>
+                </ng-container>
+              </td>
+            </ng-container>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="schedulesFormatted[curSchedule].columnsDef; sticky: true;"></tr>
+          <tr class="columnsDefTR" mat-row *matRowDef="let table; columns: schedulesFormatted[curSchedule].columnsDef;">
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="quarterBTN" (click)="openChangeQuarter()">{{fyear}}</button></div>
+<div fxLayout="column wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="showChangeQuarter">
+  <div fxLayout="column wrap" class="changeQuarterDiv" fxLayoutAlign="start start" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="column wrap" class="mb-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <h4 class="mb-10">
+        Select Quarter</h4>
+      <mat-button-toggle-group [name]="selectQuarter" [appearance]="&apos;standard&apos;" [(ngModel)]="ngModelObj[&apos;selQuarter&apos;]">
+
+        <mat-button-toggle [name]="selectQuarter" [value]="quarter" *ngFor="let quarter of sQuarters;"> {{quarter}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+    <div fxLayout="column wrap" class="mb-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="years &amp;&amp; years.length &gt; 0">
+      <h4 class="mb-10">
+        Select year</h4>
+      <mat-button-toggle-group [name]="selectYear" [appearance]="&apos;standard&apos;" [(ngModel)]="ngModelObj[&apos;selYear&apos;]">
+
+        <mat-button-toggle [name]="selectYear" [value]="year" *ngFor="let year of years;"> {{year}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+    <div fxLayout="row wrap" class="mt-10" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="mr-10" (click)="this.showChangeQuarter = false;">Cancel</button><button mat-raised-button class="ml-10" color="primary" (click)="changeQuarterB()">Change</button></div>
+  </div>
+</div>

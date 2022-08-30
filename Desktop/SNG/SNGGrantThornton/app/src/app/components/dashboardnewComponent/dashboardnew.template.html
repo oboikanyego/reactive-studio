@@ -1,0 +1,44 @@
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;dashboard&apos;"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <bh-quarterselection></bh-quarterselection>
+    </div>
+  </div>
+  <div fxLayout="row wrap" class="mb-10 mt-20" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="column wrap" class="pt-10 pl-10 borderData borderView mt-10" fxFlex="19" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let userCount of countObj;">
+      <div>
+        Total {{userCount[&apos;name&apos;]}}<span *ngIf="userCount[&apos;name&apos;] !== &apos;deleted&apos;">(s)</span>: <h2 class="mb-10">{{userCount[&apos;value&apos;]}}</h2>
+      </div>
+    </div>
+  </div>
+  <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="row wrap" class="pr-10 pl-10 borderData mb-10 mt-20" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="column wrap" class="mb-10" fxFlex="32" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let chart of pieChartData2">
+        <h4 align="center">
+          {{chart.name}}
+        </h4>
+        <div fxFlex="100" fxLayout="column">
+          <ngx-charts-pie-chart [scheme]="&apos;horizon&apos;" [results]="chart.series" style="height: 250px" [labels]="true"></ngx-charts-pie-chart>
+        </div>
+      </div>
+    </div>
+    <div fxLayout="column wrap" class="mt-20" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="pieChartData1 &amp;&amp; pieChartData1.length &gt; 0">
+      <h4>
+        Schedules Completed / Outstanding</h4>
+      <div fxFlex="100" fxLayout="column">
+        <ngx-charts-bar-vertical-stacked [scheme]="&apos;horizon&apos;" [results]="pieChartData1" style="height:500px; width: 100%" [xAxis]="true" [yAxis]="true" [legend]="true" [animations]="true" [showDataLabel]="true"></ngx-charts-bar-vertical-stacked>
+      </div>
+    </div>
+    <div fxLayout="column wrap" class="mt-20" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="pieChartData2 &amp;&amp; pieChartData2.length &gt; 0 &amp;&amp; false">
+      <h3>
+        Schedules Approved / Pending</h3>
+      <div fxFlex="100" fxLayout="column">
+        <ngx-charts-bar-vertical-stacked [scheme]="&apos;nightLights&apos;" [results]="pieChartData2" style="height:500px; width: 100%" [xAxis]="true" [yAxis]="true" [legend]="true" [animations]="true" [showDataLabel]="true"></ngx-charts-bar-vertical-stacked>
+      </div>
+    </div>
+  </div>
+  <div fxLayout="row wrap" class="mt-20 width_100" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false"></div>
+</div>

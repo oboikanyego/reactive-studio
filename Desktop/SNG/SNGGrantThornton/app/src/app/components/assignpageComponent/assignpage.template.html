@@ -1,0 +1,26 @@
+<div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole == &apos;admin&apos;">
+  <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false">
+    <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+      <mat-select class="designInput" placeholder="Assigned To" [(ngModel)]="assignedModule[&apos;assignedTo&apos;]" [required]="false" multiple (openedChange)="assignSchedule()">
+        <ng-template ngFor let-user [ngForOf]="getPayload[&apos;registeredusers&apos;]" let-i="index">
+          <mat-option [value]="user.email">{{user.displayName}}</mat-option>
+        </ng-template>
+      </mat-select>
+
+    </mat-form-field>
+  </div>
+  <div fxLayout="row wrap" style="pointer-event" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+      <input matInput [(ngModel)]="assignedSearch" placeholder="Assigned To" [required]="false" (keyup)="assignSchedule()">
+      <mat-icon matSuffix (click)="assignSchedule()">search</mat-icon>
+    </mat-form-field>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <mat-form-field class="closingDateDP ml-10 designInput" [appearance]="&apos;legacy&apos;">
+      <input matInput placeholder="Closing Date" [matDatepicker]="picker" (dateInput)="picker.open()" [(ngModel)]="assignedModule[&apos;closingDate&apos;]" [min]="minDate" [required]="false" [disabled]="false">
+      <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+      <mat-datepicker #picker [disabled]="false"></mat-datepicker>
+
+    </mat-form-field>
+  </div><button mat-raised-button class="ml-10" *ngIf="scheduleName == &apos;Overdue Fees&apos; &amp;&amp; userInfo.userRole == &apos;admin&apos; &amp;&amp; false" (click)="clickedDefaults()">Defaults</button><button mat-raised-button class="primaryBTN ml-10" *ngIf="false" (click)="assignSchedule()">Assign Users</button>
+</div>

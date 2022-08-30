@@ -1,0 +1,64 @@
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" class="width_100" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;reports&apos;" [reportName]="&apos;AID Files report&apos;" [reportLink]="&apos;/home/reports/aidFilesReport&apos;" [fyear]="curQuarter"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <bh-quarterselection></bh-quarterselection>
+      <mat-form-field style="margin-left: 10px" class="searchTable designInput" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput [(ngModel)]="tableSearch" placeholder="By User" [required]="false" (keyup)="searchUsers($event)">
+        <mat-icon matSuffix (click)="searchUsers($event)">search</mat-icon>
+      </mat-form-field>
+      <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" (click)="download()" matTooltip="Download Report" color="primary">cloud_download</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="column wrap" class="scheduleCols mt-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div>
+      <table style="margin-top: 15px; width: 100%" mat-table id="downloadTable" class="aidReportTable" [dataSource]="dataSource" matSort>
+
+        <ng-container matColumnDef="name" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name and Surname</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.directorName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>Position</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.position}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="serviceLine">
+          <th mat-header-cell *matHeaderCellDef>Service Line</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.serviceLine}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="regionalOffice">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Regional Office</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.regionalOffice}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fileName">
+          <th mat-header-cell class="aidCommentTH" *matHeaderCellDef>File name</th>
+          <td mat-cell class="font10" *matCellDef="let table; let i = index;">{{table.fileName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="comment">
+          <th mat-header-cell class="aidCommentTH" *matHeaderCellDef mat-sort-header>Comment</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.comments}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell class *matHeaderCellDef mat-sort-header>Action</th>
+          <td mat-cell *matCellDef="let table; let i = index;">
+            <mat-icon class="actionBTN" matTooltip="View File" (click)="viewFile(table)">
+              remove_red_eye
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayColumns;sticky: true"></tr>
+        <tr mat-row *matRowDef="let table; columns: displayColumns">
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

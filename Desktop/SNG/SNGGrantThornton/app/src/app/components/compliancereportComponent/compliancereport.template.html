@@ -1,0 +1,85 @@
+<div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading">
+  <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+</div>
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;reports&apos;" [reportName]="&apos;Compliance report&apos;" [reportLink]="&apos;/home/reports/complianceReport&apos;" [fyear]="curQuarter"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <bh-quarterselection></bh-quarterselection>
+      <mat-form-field style="margin-left: 10px" class="searchTable designInput" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput [(ngModel)]="tableSearch" placeholder="By User" [required]="false" (keyup)="searchUsers($event)">
+        <mat-icon matSuffix (click)="searchUsers($event)">search</mat-icon>
+      </mat-form-field>
+      <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" (click)="download()" matTooltip="Download Report" color="primary">cloud_download</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="column wrap" class="mt-10 scheduleCols" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div>
+      <table style="margin-top: 15px; width: 100%" mat-table id="downloadTable" class="complianceReportTable" [dataSource]="dataSource" matSort>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="username" sticky>
+          <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header>Username </th>
+          <td class="columnsDefLabel scheduleOutputLabel" mat-cell *matCellDef="let table">
+            {{table.displayName}} <br>
+            <!--<span style="font-size: 12px;">({{table.username}})</span>-->
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Q1">
+          <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header> Q1 </th>
+          <td class="columnsDefLabel scheduleOutputLabel" mat-cell *matCellDef="let table">
+            <span class="status-{{table[&apos;Q1&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;outstanding&apos; : &apos;completed&apos;}}" *ngIf="table[&apos;Q1&apos;] &amp;&amp; table[&apos;Q1&apos;].length &gt; 0">
+            {{table[&apos;Q1&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;Outstanding&apos; : &apos;Completed&apos;}}
+            </span>
+            <span *ngIf="!table[&apos;Q1&apos;] || table[&apos;Q1&apos;].length &lt; 0">
+              N/A
+          </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Q2">
+          <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header> Q2 </th>
+          <td class="columnsDefLabel scheduleOutputLabel" mat-cell *matCellDef="let table">
+            <span class="status-{{table[&apos;Q2&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;outstanding&apos; : &apos;completed&apos;}}" *ngIf="table[&apos;Q2&apos;] &amp;&amp; table[&apos;Q2&apos;].length &gt; 0">
+            {{table[&apos;Q2&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;Outstanding&apos; : &apos;Completed&apos;}}
+            </span>
+            <span *ngIf="!table[&apos;Q2&apos;] || table[&apos;Q2&apos;].length &lt; 0">
+              N/A
+          </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Q3">
+          <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header> Q3 </th>
+          <td class="columnsDefLabel scheduleOutputLabel" mat-cell *matCellDef="let table">
+            <span class="status-{{table[&apos;Q3&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;outstanding&apos; : &apos;completed&apos;}}" *ngIf="table[&apos;Q3&apos;] &amp;&amp; table[&apos;Q3&apos;].length &gt; 0">
+            {{table[&apos;Q3&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;Outstanding&apos; : &apos;Completed&apos;}}
+            </span>
+            <span *ngIf="!table[&apos;Q3&apos;] ||table[&apos;Q3&apos;].length &lt; 0">
+              N/A
+          </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Q4">
+          <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header> Q4 </th>
+          <td class="columnsDefLabel scheduleOutputLabel" mat-cell *matCellDef="let table">
+            <span class="status-{{table[&apos;Q4&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;outstanding&apos; : &apos;completed&apos;}}" *ngIf="table[&apos;Q4&apos;] &amp;&amp; table[&apos;Q4&apos;].length &gt; 0">
+            {{table[&apos;Q4&apos;].indexOf(&apos;outstanding&apos;) &gt;= 0 ? &apos;Outstanding&apos; : &apos;Completed&apos;}}
+            </span>
+            <span *ngIf="!table[&apos;Q4&apos;] ||table[&apos;Q4&apos;].length &lt; 0">
+              N/A
+          </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayColumns;sticky: true"></tr>
+        <tr mat-row *matRowDef="let table; columns: displayColumns">
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

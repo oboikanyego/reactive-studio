@@ -1,0 +1,142 @@
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false" *ngIf="showHeader">
+    <div>
+      <bh-pageheader [data]="&apos;cpd&apos;" [cpdName]="curListDetails[&apos;name&apos;]" [cpdLink]="curListDetails[&apos;link&apos;]"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <bh-quarterselection></bh-quarterselection><button mat-raised-button class="ml-10" *ngIf="showActionBTNs" color="primary" (click)="addCPD()">Add CPD</button>
+      <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" (click)="download()" matTooltip="Download Report" *ngIf="curSelected == &apos;activity&apos; &amp;&amp; showActionBTNs" color="primary">cloud_download</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="row wrap" class="mt-20" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="mr-10" [ngClass]="{&apos;primaryBTN&apos; : btnStatusLabel == &apos;active&apos;}" (click)="getStatement(true)">Active list</button><button mat-raised-button [ngClass]="{&apos;primaryBTN&apos; : btnStatusLabel !== &apos;active&apos;}" (click)="getStatement(false)">Archived</button></div>
+  <div fxLayout="column " class="mt-10 tableScrollWrapper" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <h3 *ngIf="!dataSource || dataSource.data.length &lt;= 0" align="center" class="mt-20 width_100">
+      No CPD {{curSelected}} found for the selected quarter.</h3>
+    <div *ngIf="dataSource &amp;&amp; dataSource.data.length &gt; 0" class="width_100">
+      <table mat-table [dataSource]="dataSource" id="downloadTable" matSort class="width_100">
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"> </tr>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name and surname </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.createdBy}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.email}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="skill">
+          <th mat-header-cell *matHeaderCellDef> Skill </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.skill}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="target">
+          <th mat-header-cell *matHeaderCellDef> Target </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.targetDate | date: &apos;dd-MM-yyyy&apos;}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="quarter">
+          <th mat-header-cell *matHeaderCellDef> Quarter </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.quarter}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastUpdated">
+          <th mat-header-cell *matHeaderCellDef> Last updated </th>
+          <td mat-cell *matCellDef="let element">
+            <span *ngIf="element.modifiedAt">
+            {{element.modifiedAt | date: &apos;dd-MM-yyyy&apos;}}
+            </span>
+            <span *ngIf="element.createdDate">
+            {{element.createdDate | date: &apos;dd-MM-yyyy&apos;}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cpdActivity">
+          <th mat-header-cell *matHeaderCellDef> CPD Activity </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.skill}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="professionalBody">
+          <th mat-header-cell *matHeaderCellDef> Professional Body </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.professionalBody}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="allocatedHours">
+          <th mat-header-cell *matHeaderCellDef> Allocated Hours </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.allocatedHours}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="completedDate">
+          <th mat-header-cell *matHeaderCellDef> Completed Date </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.completedDate | date: &apos;dd-MM-yyyy&apos;}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="declared">
+          <th mat-header-cell *matHeaderCellDef> Declared </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.declared ? &apos;Yes&apos; : &apos;No&apos;}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="comments">
+          <th mat-header-cell *matHeaderCellDef> Comments </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.comments}}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="certificate">
+          <th mat-header-cell *matHeaderCellDef> Certificate </th>
+          <td mat-cell *matCellDef="let element">
+            <span *ngIf="element.proofs &amp;&amp; element.proofs.length &gt; 0 &amp;&amp; !downloadStarted">Proof attached</span>
+            <span *ngIf="downloadStarted">
+                <span *ngFor="let proof of element.proofs">
+                    {{proof.filename}}, <br>
+                </span>
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let table; let i = index;">
+            <mat-icon class="actionBTN" matTooltip="View CPD Files" (click)="viewFiles(table)" *ngIf="btnStatusLabel == &apos;active&apos; &amp;&amp; curSelected == &apos;activity&apos; &amp;&amp; table.proofs &amp;&amp; table.proofs.length &gt; 0">
+              remove_red_eye
+            </mat-icon>
+            <mat-icon class="actionBTN" matTooltip="Edit CPD" (click)="editRecord(table)" *ngIf="btnStatusLabel == &apos;active&apos; &amp;&amp; showActionBTNs">
+              edit
+            </mat-icon>
+            <mat-icon class="actionBTN" matTooltip="Delete CPD" (click)="deleteRecord(table)" *ngIf="btnStatusLabel == &apos;active&apos; &amp;&amp; showActionBTNs &amp;&amp; (curSelected !== &apos;developmentPlan&apos; || !table.completedDate)">
+              delete
+            </mat-icon>
+            <mat-icon class="actionBTN" matTooltip="Activate CPD" (click)="enableRecord(table)" *ngIf="btnStatusLabel !== &apos;active&apos; &amp;&amp; showActionBTNs">
+              check_circle
+            </mat-icon>
+          </td>
+        </ng-container>
+
+      </table>
+    </div>
+  </div>
+</div>

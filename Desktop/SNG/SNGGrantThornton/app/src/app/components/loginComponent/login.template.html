@@ -1,0 +1,29 @@
+<div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading || true">
+  <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+</div>
+<div fxLayout="row wrap" class="wholeScreen" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false">
+  <div fxLayout="row wrap" class="leftDiv_login width_50" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"></div>
+  <div fxLayout="column wrap" class="width_50 height_100" fxLayoutAlign="space-around center" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="column wrap" style="width: 100%;" fxFlex="80" fxLayoutGap="35px" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><img imgSrc="/Web/Images/logo.png">
+        <h1 class="logo-header-style">
+          My Risk Space</h1>
+      </div>
+      <form [formGroup]="loginForm" style=" width: 65%">
+        <div fxLayout="column wrap" fxLayoutAlign="center stretch" [fxShow]="true" [fxHide]="false">
+          <mat-form-field class="width_100" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+            <input matInput type="email" placeholder="Email Address" [required]="true" formControlName="email">
+
+          </mat-form-field>
+          <mat-form-field class="width_100" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+            <input matInput type="password" placeholder="Password" [required]="true" formControlName="password">
+
+          </mat-form-field><button mat-raised-button class="primaryBTN" (click)="loginUser()">Login</button>
+        </div>
+      </form>
+    </div>
+    <div style="font-size: 12px; color: #999" class="text-center">
+      <bh-footer></bh-footer>
+    </div>
+  </div>
+</div>

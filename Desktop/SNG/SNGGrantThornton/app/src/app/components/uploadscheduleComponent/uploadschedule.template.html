@@ -1,0 +1,46 @@
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" class="width_100" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;Upload schedules&apos;"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <bh-quarterselection></bh-quarterselection>
+      <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="ml-10" *ngIf="enableKeys" color="primary" (click)="saveDeclaration()">Confirm</button><button mat-raised-button class="ml-10" color="warn" (click)="resetDeclaration()">Reset</button></div>
+    </div>
+  </div>
+  <div fxLayout="column " class="mt-20" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <p class="font11">
+      Select the declaration type and may upload a .xlsx file</p>
+    <div fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="column " fxFlex="30" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+          <mat-select style="width: 100%;" class="width_100" placeholder="Declaration type" [required]="false" (selectionChange)="declarationSelected($event)" [disabled]="disableSelection">
+            <mat-option [value]="&apos;Annual Independence Declaration - Professional Employees&apos;" disabled="false">Declaration -- Professional Employees</mat-option>
+            <mat-option [value]="&apos;Annual Independence Declaration - Manager&apos;" disabled="false">Declaration -- Manager</mat-option>
+            <mat-option [value]="&apos;Annual Independence Declaration - Director&apos;" disabled="false">Declaration -- Director</mat-option>
+          </mat-select>
+
+        </mat-form-field>
+      </div>
+      <div>
+
+        <div class="fileUploadDiv width-100 mb-10">
+          <!-- <label for="dofaFileUpload" class="helpText">Select</label> -->
+          <input id="generalInfoFileInput" type="file" hidden accept=".xlsx, .xls" (change)="getFileDetails($event)">
+        </div>
+        <div class="fileUploadDiv width-100 mb-10" fxFlex fxLayout="row" fxLayoutAlign="start center">
+          <label for="generalInfoFileInput" class="fileUploadLabel width-70 font-12">{{uploadFilesSel || &apos;Click here to upload a file&apos;}}</label>
+          <button mat-button class="fileUploadBTN primaryBTN" (click)="uploadAFile()">
+            <mat-icon>cloud_upload</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div fxLayout="column " fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div class="mt-10">
+      <mat-divider></mat-divider>
+      <div class="mt-20" id="downloadDivPDF"></div>
+    </div>
+  </div>
+</div>

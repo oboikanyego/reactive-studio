@@ -1,0 +1,87 @@
+<div fxLayout="row wrap" class="dialogHeader" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+  <h4 style="margin: 0px 0; text-transform: capitalize">
+    CPD {{data.type}}</h4><button mat-mini-fab style="transform: scale(0.6);" class="dialogClose primaryBTN" color="warn" (click)="onNoClick()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data.type !== &apos;viewFiles&apos;">
+  <form [formGroup]="cpdForm" *ngIf="showCPDForm">
+    <div fxLayout="column " class="mt-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="row " fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+        <div fxLayout="column wrap" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <mat-form-field class="searchTable" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+            <input matInput placeholder="Skill Name *" [required]="false" formControlName="skill">
+
+          </mat-form-field>
+        </div>
+        <div fxLayout="column wrap" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <mat-form-field class="searchTable" [appearance]="&apos;legacy&apos;">
+            <input matInput placeholder="Target date *" [matDatepicker]="cpdPicker" formControlName="targetDate" [min]="validateDates.minTargetDate" [max]="validateDates.maxTargetDate" [required]="false" [disabled]="true">
+            <mat-datepicker-toggle matSuffix [for]="cpdPicker" disabled="false"></mat-datepicker-toggle>
+            <mat-datepicker #cpdPicker [disabled]="false"></mat-datepicker>
+
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div fxLayout="column " fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data.type == &apos;activity&apos;">
+      <div fxLayout="row " class="mt-10" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+        <div fxLayout="column wrap" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+            <input matInput type="number" placeholder="Allocated hours *" [required]="false" formControlName="allocatedHours">
+
+          </mat-form-field>
+        </div>
+        <div fxLayout="column wrap" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <mat-form-field [appearance]="&apos;legacy&apos;">
+            <input matInput placeholder="Completed date *" [matDatepicker]="cpdCompletedDatepicker" formControlName="completedDate" [min]="validateDates.minCompDate" [max]="validateDates.maxCompDate" [required]="false" [disabled]="true">
+            <mat-datepicker-toggle matSuffix [for]="cpdCompletedDatepicker" disabled="false"></mat-datepicker-toggle>
+            <mat-datepicker #cpdCompletedDatepicker [disabled]="false"></mat-datepicker>
+
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="column wrap" class="mt-10" fxFlex="100" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <mat-form-field>
+          <textarea matInput formControlName="comments" rows="4" placeholder="Comments" [required]="false"></textarea>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row " class="mt-10" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+        <div fxLayout="column wrap" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+            <input matInput placeholder="Professional body *" [required]="false" formControlName="professionalBody">
+
+          </mat-form-field>
+        </div>
+        <div fxLayout="column wrap" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <div style="flex-flow: column;     box-sizing: border-box;     display: flex;     place-content: stretch flex-start;     align-items: stretch;" class="width_100">
+
+            <div class="fileUploadDiv width_100 mb-10" fxFlex fxLayout="row" fxLayoutAlign="start center">
+              <!-- <label for="dofaFileUpload" class="helpText">Select</label> -->
+              <input id="CPDFileInput" type="file" multiple hidden accept=".pdf, .jpg, .png, .xlsx, .xls, .doc, .docx" (change)="getFileDetails($event)">
+            </div>
+            <div class="fileUploadDiv width_100 mb-10" fxFlex fxLayout="row" fxLayoutAlign="start center">
+              <label for="CPDFileInput" class="fileUploadLabel width-70 font-12">
+                {{uploadFilesSel || &apos;Click here to upload file(s)&apos;}}
+              </label>
+              <button mat-button class="fileUploadBTN primaryBTN" (click)="uploadAFile()" matTooltip="Upload selected files">
+                <mat-icon>cloud_upload</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data &amp;&amp; data.editData &amp;&amp; data.editData.proofs">
+        <mat-chip-list [selectable]="true" [multiple]="true">
+
+          <mat-chip class="font10" *ngFor="let proof of data.editData.proofs" [removable]="false">
+            {{proof.name}}
+          </mat-chip>
+        </mat-chip-list>
+      </div>
+    </div>
+  </form>
+  <mat-error class="font10" align="end" *ngIf="fileNotUploaded">Please click on files upload button.. <mat-icon>cloud_upload</mat-icon>
+  </mat-error>
+  <div fxLayout="row wrap" class="mt-20" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="mr-10" [mat-dialog-close]="{ result: this.cpdForm.value }" color="primary" [disabled]="cpdForm[&apos;invalid&apos;] || fileNotUploaded">{{buttonLabel}}</button><button mat-raised-button (click)="onNoClick()">Cancel</button></div>
+</div>

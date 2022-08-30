@@ -1,0 +1,119 @@
+<div fxLayout="row wrap" class="dialogHeader" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+  <h4 style="margin: 0px 0;">
+    {{data.data.title}}
+  </h4><button mat-mini-fab style="transform: scale(0.6);" class="dialogClose primaryBTN" color="warn" (click)="onNoClick()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div fxLayout="column " fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="data.type == &apos;defaultsSchedules&apos;">
+  <div fxLayout="row wrap" class="defaultSBTNs" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="row wrap" class="ml-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let default of Object.keys(defaultsOutput)">
+      <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput [(ngModel)]="defaultsOutput[default]" type="number" placeholder="{{default}}" [required]="false" min="0">
+
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="primaryBTN" [mat-dialog-close]="defaultsOutput" (click)="saveDefaults()">Save</button><button mat-raised-button class="ml-10" (click)="onNoClick()">Cancel</button></div>
+</div>
+<div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data.type == &apos;userProfile&apos;">
+  <div class="width_100">
+    <table class="width_100" border="1" cellspacing="0" cellpadding="10">
+      <tbody>
+        <tr>
+          <td align="right">Name:</td>
+          <td>{{userInfo.displayName}}</td>
+        </tr>
+        <tr>
+          <td align="right">EMail:</td>
+          <td>{{userInfo.email}}</td>
+        </tr>
+        <tr>
+          <td align="right">Role:</td>
+          <td>{{userInfo.userRole}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data.data.component == &apos;userForm&apos;">
+  <div style="width: 100%">
+    <bh-userform [dialog]="dialogRef" [data]="data"></bh-userform>
+  </div>
+</div>
+<div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data.data.component == &apos;assignUsers&apos;">
+  <div style="width: 100%">
+    <bh-assignusers [dialog]="dialogRef" [data]="data"></bh-assignusers>
+  </div>
+</div>
+<div fxLayout="column wrap" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="data.type == &apos;confirm&apos;">
+  <p style="margin: 0 0 15px; text-align: center">
+    Sure, you want to {{data.data.title}} ?
+    <br>
+    <span style="font-size: 11px" *ngIf="data.data.mode == &apos;rejectAID&apos;">
+    If yes, please enter comments below and click on confirm
+</span>
+  </p>
+  <div fxLayout="column wrap" class="width_100" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data.data.mode == &apos;rejectAID&apos;">
+    <mat-form-field class="font11">
+      <textarea matInput [(ngModel)]="rejectComments" rows="5" placeholder="Enter comments" [required]="true"></textarea>
+    </mat-form-field>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="primaryBTN" [mat-dialog-close]="true" *ngIf="data.data.mode !== &apos;rejectAID&apos;">Confirm</button><button mat-raised-button class="confirmAIDApproval" [mat-dialog-close]="{result: true, comments: rejectComments}" *ngIf="data.data.mode == &apos;rejectAID&apos;" color="primary">Confirm</button><button mat-raised-button style="margin-left: 15px;" (click)="onNoClick()">Cancel</button></div>
+</div>
+<div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="data.type == &apos;viewFiles&apos;">
+  <mat-list class="width_100">
+    <mat-list-item *ngFor="let file of data.data.filesData; let i = index;" class="width_100">
+      <div fxLayout="row " class="width_100 primaryColorText" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+        <h5>
+          {{file.name}}
+        </h5>
+        <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <mat-icon class="cursorHand mr-10" (click)="viewFile(file)" matTooltip="View file">remove_red_eye</mat-icon>
+          <mat-icon class="cursorHand" (click)="deleteFile(file, i)" matTooltip="Delete file" color="warn">delete_forever</mat-icon>
+        </div>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</div>
+<div fxLayout="column wrap" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="data.type == &apos;changeRole&apos;">
+  <p style="margin: 0 0 15px; text-align: center" class="font11">
+    Please select the role from the bottom list.
+    <br>
+    The selected role will be applied for all the users previously selected.
+  </p>
+  <mat-button-toggle-group [name]="userRole" (change)="selectedRoleFN($event)" [appearance]="&apos;standard&apos;">
+
+    <mat-button-toggle [name]="userRole" [value]="&apos;admin&apos;"> Admin
+    </mat-button-toggle>
+
+    <mat-button-toggle [name]="userRole" [value]="&apos;director&apos;"> Director
+    </mat-button-toggle>
+
+    <mat-button-toggle [name]="userRole" [value]="&apos;manager&apos;"> Manager
+    </mat-button-toggle>
+
+    <mat-button-toggle [name]="userRole" [value]="&apos;user&apos;"> Other users
+    </mat-button-toggle>
+
+    <mat-button-toggle> Department
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <div fxLayout="row wrap" class="mt-20" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="primaryBTN" [mat-dialog-close]="{confirm: true, selected: selectedRole}">Confirm</button><button mat-raised-button style="margin-left: 15px;" (click)="onNoClick()">Cancel</button></div>
+</div>
+<div fxLayout="column wrap" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="data.type == &apos;changeDepartment&apos;">
+  <p style="margin: 0 0 15px; text-align: center" class="font11">
+    Please select the department from the bottom list.
+    <br>
+    The selected department will be applied for all the users previously selected.
+  </p>
+  <mat-button-toggle-group [name]="Department" (change)="selectedRoleFN($event)" [appearance]="&apos;standard&apos;">
+
+    <mat-button-toggle [name]="Department" [value]="&apos;advisory&apos;"> Advisory
+    </mat-button-toggle>
+
+    <mat-button-toggle [name]="Department" [value]="&apos;assurance&apos;"> Assurance
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <div fxLayout="row wrap" class="mt-20" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="primaryBTN" [mat-dialog-close]="{confirm: true, selected: selectedRole}">Confirm</button><button mat-raised-button style="margin-left: 15px;" (click)="onNoClick()">Cancel</button></div>
+</div>

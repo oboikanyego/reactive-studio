@@ -1,0 +1,42 @@
+<div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading">
+  <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+</div>
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;reports&apos;" [reportName]="&apos;Consolidated report&apos;" [reportLink]="&apos;/home/reports/consolidateReport&apos;" [fyear]="curQuarter"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <bh-quarterselection></bh-quarterselection>
+      <mat-form-field style="margin-left: 10px" class="searchTable designInput" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput [(ngModel)]="tableSearch" placeholder="By user" [required]="false" (keyup)="searchUsers($event)">
+        <mat-icon matSuffix (click)="searchUsers($event)">search</mat-icon>
+      </mat-form-field>
+      <mat-icon style="cursor: pointer;" class="ml-10 downloadBTN" (click)="download()" color="primary">cloud_download</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="column " fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="displayColumns.length &gt; 1">
+    <div class="mt-10 scheduleCols">
+      <table style="margin-top: 15px; min-width: 100%" mat-table id="downloadTable" class="consolidateReportTable" [dataSource]="dataSource" matSort>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="{{columnName}}" *ngFor="let columnName of displayColumns; let i = index" [sticky]="i == 0">
+          <th class="columnsDefLabel" mat-header-cell *matHeaderCellDef mat-sort-header> {{columnName}} </th>
+          <td class="columnsDefLabel scheduleOutputLabel" mat-cell *matCellDef="let table">
+            <span class="status-{{table[columnName] ? table[columnName] : &apos;N/A&apos;}}" *ngIf="columnName == &apos;username&apos;" matTooltip="{{table[columnName]}}">
+            {{table.displayName}} <br>
+            <!--<span style="font-size: 12px;">({{table.username}})</span>-->
+            </span>
+            <span class="status-{{table[columnName] ? table[columnName] : &apos;N/A&apos;}}" *ngIf="columnName !== &apos;username&apos;" matTooltip="{{table[columnName]}}">
+            {{table[columnName] ? table[columnName] : &apos;N/A&apos;}}
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayColumns;sticky: true;"></tr>
+        <tr mat-row *matRowDef="let table; columns: displayColumns">
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

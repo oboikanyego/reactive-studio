@@ -1,0 +1,139 @@
+<div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading">
+  <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+</div>
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;schedulesView&apos;" [scheduleName]="scheduleName" [fyear]="curQuarter" *ngIf="scheduleName"></bh-pageheader>
+    </div>
+    <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="assignedByDetails">
+          <div matTooltip="{{assignedByDetails.assignedBy}}" style="font-size: 14px;" class="mr-10">
+            {{userInfo.userRole == &apos;user&apos; ? &apos;Nominated By:&apos; : &apos;Assigned By:&apos;}} <br>
+            <!--<span style="color: #888" *ngIf="userInfo.userRole == 'director'">{{assignedByDetails.assignedByName}}</span>
+<span style="color: #888" *ngIf="userInfo.userRole == 'user'">{{assignedByDetails.nominatedByName}}</span>-->
+            <span style="font-size: 12px;color: #888; text-transform: capitalize">{{assignedByDetails.displayName}}</span>
+          </div>
+        </div>
+        <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="!showNoToDeclare &amp;&amp; userInfo.userRole == &apos;director&apos; ">
+          <div fxLayout="row wrap" style="pointer-event" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="scheduleName !== &apos;Gifts Register&apos;">
+            <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+              <input matInput [(ngModel)]="assignedSearch" placeholder="Nominated To" [required]="false" (keyup)="nominateUsers()">
+              <mat-icon matSuffix (click)="nominateUsers()">search</mat-icon>
+            </mat-form-field>
+          </div>
+          <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false">
+            <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+              <mat-select class="designInput" placeholder="Nominate to" [(ngModel)]="assignedModule[&apos;nominatedTo&apos;]" [required]="false" multiple>
+                <ng-template ngFor let-user [ngForOf]="getPayload[&apos;registeredusers&apos;]" let-i="index">
+                  <mat-option [value]="user.email">{{user.displayName}}</mat-option>
+                </ng-template>
+              </mat-select>
+
+            </mat-form-field><button mat-raised-button class="primaryBTN ml-10" (click)="nominateUsers()">Nominate</button>
+          </div>
+        </div>
+      </div>
+      <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole == &apos;admin&apos;">
+        <div>
+          <bh-assignpage [data]="&apos;schedules&apos;" [scheduleName]="scheduleName" [fyear]="curQuarter" [getPayload]="getPayload" [assignedModule]="assignedModule" *ngIf="scheduleName"></bh-assignpage>
+        </div><button mat-raised-button class="ml-10" *ngIf="scheduleName == &apos;Overdue Fees&apos; &amp;&amp; userInfo.userRole == &apos;admin&apos;" (click)="clickedDefaults()">Defaults</button><button mat-raised-button class="primaryBTN ml-10" *ngIf="false" (click)="assignSchedule()">Assign Users</button>
+      </div>
+    </div>
+  </div>
+  <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="getPayload">
+    <div fxLayout="row wrap" style="margin: 10px 0;" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="queryParams.name &amp;&amp; userInfo.userRole == &apos;director&apos;">
+      <mat-icon class="cursorHand" (click)="openHomeSchedule()" color="primary">arrow_back</mat-icon>
+      <h3 style="margin: 5px;text-transform : capitalize" class="guidelinesH3">
+        <span>
+        {{queryParams.name}}
+        </span>
+      </h3>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="end center" [fxShow]="true" [fxHide]="false" *ngIf="scheduleInputs &amp;&amp; userInfo.userRole !== &apos;admin&apos; &amp;&amp; !showNoToDeclare">
+      <div fxLayout="row wrap" style="margin: 10px 0;" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole == &apos;director&apos; &amp;&amp; !userEmail"><button mat-raised-button class="primaryBTN" (click)="saveScheduleOutput()">Save work</button><button mat-raised-button class="ml-10" *ngIf="false" (click)="nominateUsers()">Nominate Users</button><button mat-raised-button class="ml-10" *ngIf="scheduleOutput.length &lt;= 1 &amp;&amp; !scheduleProgress" (click)="nothingToDeclare()">Nothing to Declare</button><button mat-raised-button class="ml-10" (click)="signOffSchedule()">SignOff</button></div>
+      <div fxLayout="row wrap" style="margin: 10px 0;" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole == &apos;user&apos; || userInfo.userRole == &apos;manager&apos;"><button mat-raised-button class="primaryBTN mat-raised-button schedule-{{scheduleStatus}}" (click)="saveScheduleOutput()">Save work</button><button mat-raised-button class="ml-10 schedule-{{scheduleStatus}} mat-raised-button" (click)="commitSchedule()">Commit</button></div>
+    </div>
+    <div fxLayout="column " class="scheduleCols" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="getPayload[&apos;scheduleslist&apos;]">
+      <div fxLayout="row wrap" class="columnsDefDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <div fxLayout="row wrap" class="columnsDefLabel deleteBTNLabel" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"></div><label *ngFor="let column of getPayload[&apos;scheduleslist&apos;].columnsDef" class="columnsDefLabel">
+          {{column.name}}
+          <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole == &apos;admin&apos; &amp;&amp; assignedModule.defaults &amp;&amp; scheduleName == &apos;Overdue Fees&apos; &amp;&amp; Object.keys(assignedModule.defaults).indexOf(column.name) &gt;= 0">
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let defaultKey of Object.keys(assignedModule.defaults)"><label *ngIf="column.name == defaultKey &amp;&amp; assignedModule.defaults[column.name]" class="columnsDefLabel defaultLabel">
+
+                {{assignedModule.defaults[column.name]}}
+              </label></div>
+          </div>
+        </label>
+      </div>
+      <div fxLayout="column wrap" class="columnsDefWrapper" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="scheduleInputs &amp;&amp; userInfo.userRole !== &apos;admin&apos;" [ngClass]="{&apos;disabledDiv&apos; : showNoToDeclare}">
+        <div fxLayout="row wrap" class="columnsDefRow schedule-{{scheduleStatus}}" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let scheduleRow of scheduleInputRows; let rowIndex = index;" [ngClass]="{&apos;nothingToDeclare&apos; : nothingDeclared}">
+          <div fxLayout="row wrap" class="columnsDefLabel deleteBTNLabel" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+            <mat-icon class="cursorHand" (click)="deleteScheduleRow(rowIndex, scheduleRow)" [ngClass]="{&apos;disabledBTN&apos; :  userEmail}" *ngIf=" !userEmail" color="warn">delete</mat-icon>
+          </div>
+          <div fxLayout="column wrap" class="columnsDefLabel" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let scheduleField of scheduleRow; let columnIndex = index;">
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="scheduleField.type == &apos;freeForm&apos; &amp;&amp; scheduleField.defaultValue">
+              <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+                <input matInput [(ngModel)]="scheduleOutput[rowIndex][scheduleField.name]" type="{{scheduleField.validData ? scheduleField.validData : &apos;text&apos;}}" placeholder="Enter value" [required]="false" min="0" (keyup)="validateInput(scheduleField, rowIndex, $event)" [disabled]="scheduleField.dependOn &amp;&amp; scheduleOutput[rowIndex][scheduleField.dependOn] !== scheduleField.dependValue">
+
+              </mat-form-field>
+            </div>
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="scheduleField.type == &apos;freeForm&apos; &amp;&amp; !scheduleField.defaultValue">
+              <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+                <input matInput [(ngModel)]="scheduleOutput[rowIndex][scheduleField.name]" type="{{scheduleField.validData ? scheduleField.validData : &apos;text&apos;}}" placeholder="Enter value" [required]="false" min="0" (keyup)="validateInput(scheduleField, rowIndex, $event)" [disabled]="scheduleField.dependOn &amp;&amp; scheduleOutput[rowIndex][scheduleField.dependOn] !== scheduleField.dependValue">
+
+              </mat-form-field>
+            </div>
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="scheduleField.type == &apos;datePicker&apos;">
+              <mat-form-field class="scheduleRowDP" [appearance]="&apos;legacy&apos;">
+                <input matInput placeholder="Date Picker" [matDatepicker]="picker" [(ngModel)]="scheduleOutput[rowIndex][scheduleField.name]" [required]="false" [disabled]="false">
+                <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+                <mat-datepicker #picker [disabled]="scheduleField.dependOn &amp;&amp; scheduleOutput[rowIndex][scheduleField.dependOn] !== scheduleField.dependValue"></mat-datepicker>
+
+              </mat-form-field>
+            </div>
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="scheduleField.type == &apos;prePopulate&apos;">
+              <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+                <input matInput [(ngModel)]="scheduleOutput[rowIndex][scheduleField.name] = directorName" placeholder="{{scheduleField.name}}" [required]="false" readonly="true">
+
+              </mat-form-field>
+            </div>
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="scheduleField.type == &apos;dropDown&apos;">
+              <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+                <mat-select placeholder="Select" [(ngModel)]="scheduleOutput[rowIndex][scheduleField.name]" [required]="false" [disabled]="scheduleField.dependOn &amp;&amp; scheduleOutput[rowIndex][scheduleField.dependOn] !== scheduleField.dependValue">
+                  <ng-template ngFor let-option [ngForOf]="scheduleField.value" let-i="index">
+                    <mat-option [value]="option">{{option}}</mat-option>
+                  </ng-template>
+                </mat-select>
+
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <mat-icon style="margin: 10px 0 0 15px" class="addBTNLabel cursorHand" (click)="addScheduleRow()" [ngClass]="{&apos;disabledBTN&apos; :  (scheduleStatus == &apos;completed&apos;) || userEmail ,  &apos;nothingToDeclare&apos; : nothingDeclared}" *ngIf=" !userEmail">add_circle</mat-icon>
+        <mat-icon style="margin: 10px 0 0 15px" class="addBTNLabel cursorHand" *ngIf="userEmail &amp;&amp; false" (click)="openHomeSchedule()">home</mat-icon>
+      </div>
+    </div>
+    <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole == &apos;director&apos;">
+      <div *ngIf="assignedModule[&apos;nominatedTo&apos;].length &gt; 0" style="width: 100%; ">
+        <bh-listtable [scheduleDetails]="getPayload[&apos;scheduleslist&apos;]" [quarter]="curQuarter" [nominatedToList]="assignedModule[&apos;nominatedTo&apos;]"></bh-listtable>
+        <!--<ng-container  *ngIf="assignedModule['nominatedTo'].length == 0">
+    <bh-listtable [nominatedToList]="assignedModule['nominatedTo']"></bh-listtable>
+</ng-container>
+<ng-container  *ngIf="assignedModule['nominatedTo'].length > 0">
+    <bh-listtable [nominatedToList]="assignedModule['nominatedTo']"></bh-listtable>
+</ng-container>-->
+      </div>
+      <div *ngIf="assignedModule[&apos;nominatedTo&apos;].length == 0" class="nomineesDiv width_100">
+        <h3 class="guidelinesH3">Nominees</h3>
+        <h3 style="font-weight: normal; font-size: 16px"> No data found.</h3>
+      </div>
+    </div>
+    <div fxLayout="column wrap" class="guidelinesDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="getPayload[&apos;scheduleslist&apos;]">
+      <div style="width: 100%">
+        <bh-guidelinestab [getPayload]="getPayload[&apos;scheduleslist&apos;]" [viewName]="&apos;schedulesList&apos;"></bh-guidelinestab>
+      </div>
+    </div>
+  </div>
+</div>

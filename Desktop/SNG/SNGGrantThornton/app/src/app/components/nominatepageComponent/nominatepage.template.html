@@ -1,0 +1,18 @@
+<div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" *ngIf="!showNoToDeclare &amp;&amp; userInfo.userRole == &apos;director&apos; ">
+  <div fxLayout="row wrap" style="pointer-event" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+      <input matInput [(ngModel)]="assignedSearch" placeholder="Nominated To" [required]="false" (keyup)="nominateUsers()">
+      <mat-icon matSuffix (click)="nominateUsers()">search</mat-icon>
+    </mat-form-field>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false">
+    <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+      <mat-select class="designInput" placeholder="Nominate to" [(ngModel)]="assignedModule[&apos;nominatedTo&apos;]" [required]="false" multiple>
+        <ng-template ngFor let-user [ngForOf]="getPayload[&apos;registeredusers&apos;]" let-i="index">
+          <mat-option [value]="user.email">{{user.displayName}}</mat-option>
+        </ng-template>
+      </mat-select>
+
+    </mat-form-field><button mat-raised-button class="primaryBTN ml-10" (click)="nominateUsers()">Nominate</button>
+  </div>
+</div>

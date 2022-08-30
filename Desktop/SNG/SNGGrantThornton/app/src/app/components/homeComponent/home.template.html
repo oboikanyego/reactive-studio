@@ -1,0 +1,55 @@
+<div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading">
+    <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+  </div>
+</div>
+<div fxLayout="column " fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" class="header_div" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="row wrap" class="header_logo imgView" fxFlex="18" fxLayoutAlign="space-evenly center" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="column wrap" fxFlex="16" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <mat-icon class="cursorHand" (click)="sidenav.toggle()" matTooltip="Toggle side menu">menu</mat-icon>
+      </div>
+      <div fxLayout="column wrap" fxFlex="75" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <h3 class="logo-header-style">
+          My Risk Space</h3>
+      </div>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="end stretch" [fxShow]="true" [fxHide]="false">
+      <mat-icon class="cursorHand mr-10 primaryBTN" (click)="userProfile()">person</mat-icon>
+      <mat-icon class="primaryBTN logout" (click)="logoutUser()" matTooltip="Logout">power_settings_new</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="row wrap" style="height:calc(100vh - 75px)" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="true">
+    <mat-sidenav-container style="width: 100%;" hasBackdrop="false">
+      <router-outlet></router-outlet>
+      <mat-sidenav #sidenav class="menuDiv_home" [mode]="sideNavMode" [position] [opened]="sideNavMode == &apos;side&apos;">
+        <div fxLayout="column " style="height: 100%" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false">
+          <div fxLayout="column " style="height: calc(100% - 55px)" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false">
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+              <div fxLayout="column wrap" class="menuLinkDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let link of metaData.menuLinks[userType]">
+                <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                  <div fxLayout="row " class="activeHighlight" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" routerLink="{{link.url}}" routerLinkActive="isActive" (click)="openCloseSublinkReports();showHideSubMenu(link)">
+                    <mat-icon class="menuIcon">{{link.icon}}</mat-icon><button mat-button class="menuBTN" matTooltip="{{link.linkTitle}}" [disableRipple]="true">{{link.linkTitle}}</button>
+                    <mat-icon *ngIf="link.subLinks &amp;&amp; !link.showSubmenu">expand_more</mat-icon>
+                    <mat-icon *ngIf="link.subLinks &amp;&amp; link.showSubmenu">expand_less</mat-icon>
+                  </div>
+                </div>
+                <div fxLayout="column wrap" class="menuLinkDiv menuSublink" fxLayoutAlign="start stretch" [fxShow]="true" *ngIf="link.subLinks &amp;&amp; link.showSubmenu">
+                  <div fxLayout="row " class="menuSubLink activeHighlight" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false" routerLink="{{subLink.url}}" *ngFor="let subLink of link.subLinks" routerLinkActive="isActive">
+                    <mat-icon class="menuIcon">{{subLink.icon}}</mat-icon><button mat-button class="menuBTN" matTooltip="{{subLink.linkTitle}}" [disableRipple]="true">{{subLink.linkTitle}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><img imgSrc="/Web/Images/logo.png" style="max-height: 90px" class="img-responsive"></div>
+          </div>
+          <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false">
+            <div style="font-size: 10px;">
+              <bh-footer></bh-footer>
+            </div>
+          </div>
+        </div>
+      </mat-sidenav>
+    </mat-sidenav-container>
+  </div>
+</div>

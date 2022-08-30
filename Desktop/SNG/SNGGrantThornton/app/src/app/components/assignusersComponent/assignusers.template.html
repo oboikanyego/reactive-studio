@@ -1,0 +1,66 @@
+<div fxLayout="column wrap" style="margin-top: 10px" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between start" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false"><button mat-raised-button class="assignUserBTN" *ngIf="scheduleData.name == &apos;Gifts Register&apos;" (click)="selectAll()">{{metaData[curState1][&apos;selectAllName&apos;]}}</button><button mat-raised-button class="ml-10 assignUserBTN" *ngIf="userInfo.userRole == &apos;admin&apos; &amp;&amp; !defaultFilter" (click)="selectAllOthers(&apos;director&apos;, &apos;curState2&apos;)">{{metaData[curState2][&apos;selectAllDirectorsName&apos;]}}</button><button mat-raised-button class="ml-10 mr-10 assignUserBTN" *ngIf="(userInfo.userRole == &apos;admin&apos; &amp;&amp; scheduleData.name == &apos;Gifts Register&apos; )  || userInfo.userRole == &apos;director&apos; || defaultFilter " (click)="selectAllOthers(&apos;user&apos;, &apos;curState3&apos;)">{{metaData[curState3][&apos;selectAllUsersName&apos;]}}</button></div>
+    <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="ml-10 mr-10 assignUserBTN" *ngFor="let role of selectableRoles[availableList]; let roleIndex = index" (click)="selectAlluserList(role[&apos;value&apos;], role)">{{role[&apos;state&apos;] + &apos; all &apos; + role[&apos;label&apos;]}}</button></div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.userRole == &apos;admin&apos;">
+      <mat-form-field class="designInput" [appearance]="&apos;legacy&apos;">
+        <input matInput placeholder="Closing Date" [matDatepicker]="picker" [(ngModel)]="closingDate" [required]="true" [disabled]="false">
+        <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+        <mat-datepicker #picker [disabled]="false"></mat-datepicker>
+
+      </mat-form-field>
+    </div>
+  </div>
+  <div fxLayout="column wrap" class="tableScrollWrapper mt-10 popUpUserTable" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="column" style="border: 1px solid #ddd">
+
+      <div fxLayout="row" fxLayoutAlign="end">
+        <div fxLayout="column" fxFlex="end">
+          <mat-form-field fxFlex="100">
+            <input matInput (keyup)="searchUsers($event)" placeholder="Search">
+          </mat-form-field>
+        </div>
+      </div>
+      <table mat-table [dataSource]="dataSource" matSort class="table-width-fix">
+        <tr mat-header-row *matHeaderRowDef="[&apos;9e4c099f-8f7a-f92b-96a6-e68eda031f41&apos;,&apos;index&apos;,&apos;displayName&apos;,&apos;email&apos;]"></tr>
+        <tr mat-row *matRowDef="let row; columns: [&apos;9e4c099f-8f7a-f92b-96a6-e68eda031f41&apos;,&apos;index&apos;,&apos;displayName&apos;,&apos;email&apos;];"></tr>
+
+        <ng-container matColumnDef="9e4c099f-8f7a-f92b-96a6-e68eda031f41">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let table; let i = index;">
+            <mat-checkbox [(ngModel)]="selectedUsers[table.email]" (change)="selectUser(table, $event)" color="primary" [required]="true" [disabled]="selectedUsers[table.email] &amp;&amp; selectedUsers[table.email].disable"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{i + 1}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="displayName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.displayName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.email}}</td>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+  <div style="color: red; font-size: 12px;margin-top: 10px">
+    <span *ngIf="userInfo.userRole == &apos;admin&apos;">
+    * Please select proper closing date and director(s) / user(s) to assign this schedule
+</span>
+    <span *ngIf="userInfo.userRole == &apos;director&apos;">
+    * Please select user(s) to nominate this schedule
+</span>
+    <br>
+    <span style="color: #444">
+   Selected: {{Object.keys(selectedUsers).length}} out of {{this.getPayload[&apos;registeredusers&apos;] ? this.getPayload[&apos;registeredusers&apos;].length : 0}} <br>
+   <span *ngIf="Object.keys(selectedUsers).length &gt; 0">(Excluding duplicate records and direct declaration uploads if any)</span>
+    </span>
+  </div>
+  <div fxLayout="row wrap" class="mt-10" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button [mat-dialog-close]="{result: true, selected: selectedUsers, closingDate: closingDate}" *ngIf="userInfo.userRole == &apos;admin&apos;" color="primary">Save</button><button mat-raised-button [mat-dialog-close]="{result: true, selected: selectedUsers, closingDate: closingDate}" *ngIf="userInfo.userRole == &apos;director&apos;" color="primary">Save</button><button mat-raised-button (click)="onNoClick()">Cancel</button></div>
+</div>

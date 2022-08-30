@@ -1,0 +1,46 @@
+<div fxLayout="column wrap" class="mb-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <h3 style="margin-top: 5px;" class="guidelinesH3">
+          Nominees</h3>
+      </mat-expansion-panel-header>
+      <div fxLayout="column" style="width: 100%">
+
+        <div fxLayout="row" fxLayoutAlign="end">
+          <div fxLayout="column" fxFlex="end">
+            <mat-form-field fxFlex="100">
+              <input matInput (keyup)="searchTable($event)" placeholder="Search">
+            </mat-form-field>
+          </div>
+        </div>
+        <table mat-table [dataSource]="dataSource" matSort class="table-width-fix">
+          <tr mat-header-row *matHeaderRowDef="[&apos;74a47856-4905-7275-1142-ab437d7353bd&apos;,&apos;email&apos;,&apos;d6bb62d7-232c-20ad-82f9-7b66eb85a7a9&apos;]"></tr>
+          <tr mat-row *matRowDef="let row; columns: [&apos;74a47856-4905-7275-1142-ab437d7353bd&apos;,&apos;email&apos;,&apos;d6bb62d7-232c-20ad-82f9-7b66eb85a7a9&apos;];"></tr>
+
+          <ng-container matColumnDef="74a47856-4905-7275-1142-ab437d7353bd">
+            <th mat-header-cell *matHeaderCellDef>Username</th>
+            <td mat-cell *matCellDef="let table; let i = index;"><span style="cursor: pointer;">
+                <span (click)="openNomineeSchedule(table)">
+    {{table.displayName}}
+</span></span></td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+            <td mat-cell *matCellDef="let table; let i = index;">{{table.email}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="d6bb62d7-232c-20ad-82f9-7b66eb85a7a9">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let table; let i = index;"><span class="status-{{table.status}}">
+              {{table.status}}</span></td>
+          </ng-container>
+        </table>
+        <mat-paginator [pageSizeOptions]="[10, 25, 100]">
+        </mat-paginator>
+
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

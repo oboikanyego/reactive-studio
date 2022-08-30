@@ -1,0 +1,106 @@
+<div fxLayout="column " style="padding: 20px;" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading">
+    <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="false" [fxHide]="true" *ngIf="false">
+    <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" (click)="refreshData()" matTooltip="Refresh data" color="primary">autorenew</mat-icon>
+    <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" matTooltip="Home" routerLink="/home/reports" color="primary">home</mat-icon><label>
+      <!--<button mat-raised-button for="usersUpload" class="successBTN" type="file" (change)="changeListener($event)" accept=".csv">
+    <mat-icon>cloud_upload</mat-icon>
+    <input type="file" class="upload" id="usersUpload" (change)="changeListener($event)"
+     accept=".csv" style="display: none;">
+</button>-->
+
+      <input type="file" name="file" id="file" class="inputfile" (change)="uploadFile($event)" accept=".csv, .xls, .xlsx">
+      <label for="file" matTooltip="Upload CSV">
+        <mat-icon>cloud_upload</mat-icon>
+      </label>
+
+      <!-- <input type="file" mat-raised-button class="upload" (change)="changeListener($event)" accept=".csv" style="visibilty: none">  -->
+    </label><button mat-raised-button (click)="deleteUser()">Delete Users</button>
+    <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" (click)="download()" matTooltip="Download Report" color="primary">cloud_download</mat-icon>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false" *ngIf="false">
+    <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+      <input matInput [(ngModel)]="userModelObj[&apos;email&apos;]" placeholder="User Email" [required]="true">
+
+    </mat-form-field>
+    <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+      <input matInput [(ngModel)]="userModelObj[&apos;quarter&apos;]" placeholder="Quarter" [required]="true">
+
+    </mat-form-field><button mat-raised-button class="successBTN" (click)="saveFilledSchedule()">Save</button><button mat-raised-button color="accent" (click)="searchClient()">Search</button>
+  </div>
+  <div class="mt-10">
+    <mat-divider></mat-divider>
+  </div>
+  <div fxLayout="row wrap" fxLayoutAlign="space-between start" [fxShow]="true" [fxHide]="false" *ngIf="false">
+    <div fxLayout="column wrap" fxFlex="28" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let schedule of getPayload[&apos;schedulesassigned&apos;]">
+        <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <mat-radio-button [required]="true" name="scheduleNameSel" (change)="selectedSchedule(schedule)">{{schedule.name}}</mat-radio-button>
+        </div>
+        <div fxLayout="row wrap" class="mb-10 mt-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><button mat-raised-button *ngFor="let nominate of schedule.nominatedTo" [ngClass]="{&apos;displayNone&apos; : nominate.nominatedBy != userModelObj[&apos;email&apos;] }" (click)="getScheduledFilled(schedule, nominate)">{{nominate.email}}</button></div>
+      </div>
+    </div>
+    <div fxLayout="column wrap" fxFlex="70" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="row wrap" class="columnsDefDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><label *ngFor="let column of tblDisplayColumns" class="columnsDefLabel">
+          {{column}}</label></div>
+      <div class="mt-10">
+        <mat-divider></mat-divider>
+      </div>
+      <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <div fxLayout="row wrap" class="columnsDefDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let output of getPayload[&apos;schedulesOutput&apos;][userModelObj[&apos;scheduleName&apos;]]"><label *ngFor="let column of tblDisplayColumns" class="columnsDefLabel">
+            {{output[column]}}</label></div>
+      </div>
+    </div>
+  </div>
+  <div fxLayout="column wrap" class="mt-20" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="false">
+    <div fxLayout="column">
+
+      <div fxLayout="row" fxLayoutAlign="end">
+        <div fxLayout="column" fxFlex="end">
+          <mat-form-field fxFlex="100">
+            <input matInput (keyup)="tblSearch($event)" placeholder="Search">
+          </mat-form-field>
+        </div>
+      </div>
+      <table mat-table [dataSource]="dataSource" id="downloadTable" matSort class="table-width-fix">
+        <tr mat-header-row *matHeaderRowDef="[&apos;email&apos;,&apos;firstName&apos;,&apos;lastName&apos;,&apos;role&apos;,&apos;adeecd0f-3589-b552-b2ab-49a373e3a03b&apos;]"></tr>
+        <tr mat-row *matRowDef="let row; columns: [&apos;email&apos;,&apos;firstName&apos;,&apos;lastName&apos;,&apos;role&apos;,&apos;adeecd0f-3589-b552-b2ab-49a373e3a03b&apos;];"></tr>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.email}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.firstName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.lastName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Declaration</th>
+          <td mat-cell *matCellDef="let table; let i = index;">{{table.role}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="adeecd0f-3589-b552-b2ab-49a373e3a03b">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let table; let i = index;"><button mat-mini-fab color="accent" (click)="downloadPDF(table)">
+              <mat-icon>cloud_download</mat-icon>
+            </button></td>
+        </ng-container>
+      </table>
+      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]">
+      </mat-paginator>
+
+    </div>
+  </div>
+  <div>
+    <div id="downloadDivPDF"></div>
+  </div>
+</div>

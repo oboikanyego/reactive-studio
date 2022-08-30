@@ -1,0 +1,44 @@
+<div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading">
+  <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+</div>
+<div fxLayout="column wrap" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+  <form [formGroup]="userForm" style="width: 100%">
+    <div fxLayout="column wrap" class="userFormInputs userForm-{{mode}}" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <mat-form-field class="width_100" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput type="email" placeholder="Email Address" [required]="true" formControlName="email">
+
+      </mat-form-field>
+      <mat-form-field class="width_100" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput placeholder="First Name" [required]="true" formControlName="firstName">
+
+      </mat-form-field>
+      <mat-form-field class="width_100" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput placeholder="Last Name" [required]="true" formControlName="lastName">
+
+      </mat-form-field>
+      <mat-form-field class="width_100" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput placeholder="Contact Number" [required]="false" formControlName="mobile">
+
+      </mat-form-field>
+      <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+        <mat-select formControlName="userRole" class="width_100" placeholder="Role" [required]="true" (selectionChange)="checkRole($event)">
+          <ng-template ngFor let-role [ngForOf]="userRoles" let-i="index">
+            <mat-option [value]="role.value">{{role.optionData}}</mat-option>
+          </ng-template>
+        </mat-select>
+
+      </mat-form-field>
+      <div fxLayout="row wrap" class="selectWidth100" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="showDepartment !== &apos;director&apos;">
+        <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+          <mat-select formControlName="department" class="width_100" placeholder="Department" [required]="!(showDepartment !== &apos;director&apos;)" multiple>
+            <ng-template ngFor let-option [ngForOf]="departmentOption" let-i="index">
+              <mat-option [value]="option.value">{{option.optionData}}</mat-option>
+            </ng-template>
+          </mat-select>
+
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="primaryBTN" (click)="mode == &apos;edit&apos; ? editUser() : saveUser()">Save</button><button mat-raised-button style="margin-left: 15px;" (click)="dialog.close()">Cancel</button></div>
+  </form>
+</div>

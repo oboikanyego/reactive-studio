@@ -1,0 +1,42 @@
+<div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="getPayload">
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+
+        <mat-panel-title>
+
+          <h3 class="guidelinesH3">
+            Guidelines</h3>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div fxLayout="column wrap" class="guidelinesInnerDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+        <div fxLayout="column wrap" style="margin-bottom: 20px;" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="getPayload.tags">
+          <h4 class="guidelinesH4">
+            Tags</h4>
+          <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><span *ngFor="let tag of getPayload.tags" class="guidelinesTags">
+            {{tag}}</span></div>
+        </div>
+        <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+          <h4 class="guidelinesH4">
+            Guidance For Completion</h4>
+          <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+            <mat-list class="guidanceList">
+              <mat-list-item *ngFor="let guideline of getPayload.guidance; let i = index;">
+                <div *ngIf="!guideline.heading">
+                  <span class="guideLinesNumber">{{i+1}}. </span>
+                  <span class="guideLine" [innerHTML]="guideline"></span>
+                </div>
+                <div fxLayout="column wrap" class="sudGuideline" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="guideline.heading"><span style="color: #7950a1;">
+                  {{guideline.heading}}</span>
+                  <mat-list *ngIf="guideline.heading">
+                    <mat-list-item *ngFor="let sudGuideline of guideline.value; let i = index;" [innerHTML]="(i+1) + &apos;.&apos; + sudGuideline"></mat-list-item>
+                  </mat-list>
+                </div>
+              </mat-list-item>
+            </mat-list>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

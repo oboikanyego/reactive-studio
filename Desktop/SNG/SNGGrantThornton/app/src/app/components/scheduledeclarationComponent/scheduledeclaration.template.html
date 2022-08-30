@@ -1,0 +1,338 @@
+<div fxLayout="row wrap" class="loadingDiv" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="loading &amp;&amp; false">
+  <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="warn" strokeWidth="5"></mat-progress-spinner>
+</div>
+<div fxLayout="column " style="background: #eee;" class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div class="paddingZeroViews">
+      <bh-pageheader [data]="queryParams.mode == &apos;edit&apos; ? &apos;reviews&apos; : &apos;schedulesView&apos;" [scheduleName]="scheduleName" [fyear]="scheduleQuarter" *ngIf="scheduleName"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="(userInfo.userRole !== &apos;admin&apos;) &amp;&amp; !queryParams?.mode"><button mat-raised-button class="successBTN" (click)="saveData()" [disabled]="userInfo.userRole == &apos;admin&apos;">Save</button><button mat-raised-button class="ml-10" color="primary" (click)="signOffSchedule()">Sign off</button></div>
+      <div *ngIf="userInfo.userRole == &apos;admin&apos; &amp;&amp; queryParams.mode !== &apos;edit&apos;">
+        <bh-assignpage [data]="&apos;schedulesADI&apos;" [scheduleName]="scheduleName" [fyear]="scheduleQuarter" [getPayload]="getPayload" [assignedModule]="assignedModule" *ngIf="scheduleName"></bh-assignpage>
+      </div>
+      <div fxLayout="row wrap" class="mr-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="userInfo.ethicsLeader &amp;&amp;  queryParams.mode == &apos;edit&apos;"><button mat-raised-button color="primary" (click)="approveAID()">Approve</button><button mat-raised-button class="ml-10" color="warn" (click)="rejectAID()">Reject</button></div>
+      <div fxLayout="row wrap" class="ml-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="(userInfo.userRole == &apos;admin&apos; || userInfo.ethicsLeader) &amp;&amp; queryParams.mode == &apos;edit&apos;">
+        <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;">
+          <mat-select placeholder="Download as" [required]="false" (selectionChange)="download($event)">
+            <mat-option [value]="&apos;xlsx&apos;" disabled="false">Excel</mat-option>
+            <mat-option [value]="&apos;pdf&apos;" disabled="false">PDF</mat-option>
+          </mat-select>
+
+        </mat-form-field>
+      </div>
+      <mat-icon style="cursor: pointer" class="ml-10 downloadBTN" (click)="download()" *ngIf="(userInfo.userRole == &apos;admin&apos; || userInfo.ethicsLeader) &amp;&amp; queryParams.mode == &apos;edit&apos; &amp;&amp; false" color="primary">cloud_download</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="row " style="margin-top: 20px;" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="column wrap" fxFlex="100" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+      <mat-horizontal-stepper [linear]="false" #stepper [disableRipple]="true" id="declarationStepper" class="selectedData stepperLabel stepperColor">
+        <mat-step label="Main Information" [disableRipple]="true">
+          <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+            <div fxLayout="row wrap" class="paddingView borderstepperView" fxFlex="100" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false">
+              <div fxLayout="column wrap" class="mt-20" fxFlex="49" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false" *ngFor="let question of policyResponse.stepper?.mainInfo.columnsDef">
+                <div class="paddingSpace font11">
+                  <span *ngIf="false">Employee Name</span>
+
+                  {{question.name}} *
+                </div>
+                <div fxLayout="column wrap" class="designInput" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="question.type == &apos;prePopulate&apos; || question.type == &apos;freeForm&apos;">
+                  <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+                    <input matInput [(ngModel)]="scheduleOutput[&apos;mainInfo&apos;][question.name] " [required]="true" (keyup)="validateInput(&apos;mainInfo&apos;,question.name)" [disabled]="question.type == &apos;prePopulate&apos; || (userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)">
+                    <mat-error *ngIf="!scheduleOutput[&apos;mainInfo&apos;][question.name] || scheduleOutput[&apos;mainInfo&apos;][question.name] == &apos; &apos;">Please enter valid data</mat-error>
+                  </mat-form-field>
+                </div>
+                <div fxLayout="column " fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="question.type == &apos;dropDown&apos;">
+                  <div class="designInput widthForm font11">
+                    <mat-form-field>
+                      <mat-label> Select {{ question.name }}</mat-label>
+                      <mat-select [multiple]="true" [(ngModel)]="scheduleOutput[&apos;mainInfo&apos;][question.name]" required [disabled]="(userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)">
+                        <input class="MatSearch" placeholder="Select {{ question.name }}" (keyup)="onKey($event.target.value, question.name, question.value)">
+                        <mat-option>None</mat-option>
+                        <mat-option *ngFor="let optionValue of mainInfo[question.name]" [value]="optionValue">{{optionValue}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div fxLayout="column wrap" class="guidelinesDiv mt-10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="policyResponse.stepper?.mainInfo.guidance">
+              <div style="width: 100%">
+                <bh-guidelinestab [getPayload]="policyResponse[&apos;stepper&apos;][&apos;mainInfo&apos;]" [viewName]="&apos;AIDView&apos;"></bh-guidelinestab>
+              </div>
+            </div>
+            <div fxLayout="row wrap" class="mt-10" fxLayoutAlign="end center" [fxShow]="true" [fxHide]="false"><button mat-raised-button class="ml-10" matStepperNext color="primary">Next</button></div>
+          </div>
+        </mat-step>
+        <mat-step label="Policy Information">
+          <div fxLayout="column wrap" class="font11" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+            <div fxLayout="row wrap" class="borderstepperView" fxLayoutAlign="space-between stretch" [fxShow]="true" [fxHide]="false">
+              <div fxLayout="column wrap" class="setpperScroll" fxFlex="30" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                <div fxLayout="row wrap" class="thinBorder padding10px" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false" *ngFor="let policy of policyInfoKeys; let i = index;" (click)="setCurrentQuestion(policy)" [class.borderView]="policy == selectedPolicy" [class.stepperColor]="policy == selectedPolicy">
+                  <div fxLayout="row wrap" class="width_100" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false" *ngIf="scheduleOutput[&apos;policyInfo&apos;][policy]">
+                    <div fxLayout="column wrap" fxFlex="70" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                      <div>
+                        {{policy}}
+                      </div>
+                    </div>
+                    <div fxLayout="column wrap" fxFlex="10" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="policyQuestionCount[policy] &lt;= Object.keys(scheduleOutput[&apos;policyInfo&apos;][policy].radioKeys).length + Object.keys(scheduleOutput[&apos;policyInfo&apos;][policy].comments).length">
+                      <mat-icon class="doneIcon">done</mat-icon>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div fxLayout="column wrap" class="setpperScroll" fxFlex="70" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                <div fxLayout="column wrap" style="padding: 15px 10px;" fxLayoutGap="1em" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let question of currentQuestions; let i = index;">
+                  <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="!question.isCPD">
+                    <div style="text-align: justify; margin-bottom: 10px">
+                      <span class="stepperQuestionNumber">{{i+1}}) </span>
+                      <span class="stepperQuestion" [innerHTML]="question.question"></span>
+                    </div>
+                    <div fxLayout="row wrap" class="width_100" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false" *ngIf="scheduleOutput[&apos;policyInfo&apos;][selectedPolicy]">
+                      <div fxLayout="row wrap" fxFlex="20" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="question.value &amp;&amp; scheduleOutput[&apos;policyInfo&apos;][selectedPolicy]">
+                        <mat-radio-group [(ngModel)]="scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].radioKeys[i]" [required]="true">
+                          <div fxLayout="column wrap" fxLayoutGap="5px" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                            <mat-radio-button [required]="true" value="{{radio}}" *ngFor="let radio of question.value" [disabled]="(userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)" [disableRipple]="true" [labelPosition]="&apos;after&apos;">{{radio}}</mat-radio-button>
+                          </div>
+                        </mat-radio-group>
+                      </div>
+                      <div fxLayout="column wrap" class="inputField-container" fxFlex="80" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="question.type">
+                        <mat-form-field>
+                          <textarea matInput [(ngModel)]="scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].comments[i]" rows="4" (keyup)="validateInput(&apos;policyInfo&apos;,selectedPolicy, &apos;comments&apos;, i)" placeholder="Enter comments" [required]="false" [disabled]="(userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)"></textarea>
+                        </mat-form-field>
+                        <mat-error align="start" *ngIf="question.exception &amp;&amp; question.exception.indexOf(scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].radioKeys[i]) &gt;=0 &amp;&amp; !scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].comments[i]">Please enter valid data</mat-error>
+                        <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="question.isCPD">
+                    <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let questionCPD of question.questions; ">
+                      <div style="text-align: justify;margin-bottom: 10px;">
+                        <span class="stepperQuestionNumber">{{i+1}}) </span>
+                        <span class="stepperQuestion" [innerHTML]="questionCPD.question"></span>
+                      </div>
+                      <div fxLayout="row wrap" class="width_100" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false" *ngIf="scheduleOutput[&apos;policyInfo&apos;][selectedPolicy]">
+                        <div fxLayout="row wrap" fxFlex="20" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="questionCPD.value">
+                          <mat-radio-group [(ngModel)]="scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].radioKeys[i]" [required]="true">
+                            <div fxLayout="column wrap" fxLayoutGap="5px" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                              <mat-radio-button [required]="true" value="{{radio}}" *ngFor="let radio of questionCPD.value" [disabled]="(userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)" [disableRipple]="true" [labelPosition]="&apos;after&apos;">{{radio}}</mat-radio-button>
+                            </div>
+                          </mat-radio-group>
+                        </div>
+                        <div fxLayout="column wrap" class="mt-10 inputField-container" fxFlex="80" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="questionCPD.type">
+                          <mat-form-field>
+                            <textarea matInput [(ngModel)]="scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].comments[i]" rows="4" (keyup)="validateInput(&apos;policyInfo&apos;,selectedPolicy, &apos;comments&apos;, i)" placeholder="Enter comments" [required]="false" [disabled]="(userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)"></textarea>
+                          </mat-form-field>
+                          <mat-error align="start" *ngIf="question.exception &amp;&amp; question.exception.indexOf(scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].radioKeys[i]) &gt;=0 &amp;&amp; !scheduleOutput[&apos;policyInfo&apos;][selectedPolicy].comments[i]">Please enter valid data</mat-error>
+                        </div>
+                      </div>
+                    </div>
+                    <div fxLayout="column wrap" class="mt-20" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="question.table">
+                      <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+                        <div>
+                          {{question.table.caption}}
+                        </div><button mat-mini-fab *ngIf="!userEmail" color="primary" (click)="addCPDrow()">
+                          <mat-icon>add</mat-icon>
+                        </button>
+                      </div>
+                      <div>
+                        <!--(keyup)="validateInput('policyInfo',selectedPolicy, 'comments', i)"<table mat-table [dataSource]="scheduleOutput['policyInfo'][selectedPolicy][tableData]" class="width_100">-->
+
+                        <table mat-table [dataSource]="dataSource" class="width_100 CPDTable">
+
+                          <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let element; let rowIndex = index;">
+                              <mat-icon *ngIf="!userEmail" matTooltip="Delete Row" class="mat-warn cursorHand" (click)="deleteCPDrow(rowIndex)">delete</mat-icon>
+                            </td>
+                          </ng-container>
+
+
+                          <ng-container matColumnDef="course">
+                            <th mat-header-cell *matHeaderCellDef> Course </th>
+                            <td mat-cell *matCellDef="let element">
+                              <mat-form-field class="scheduleRowDP">
+                                <input matInput placeholder [(ngModel)]="element.Course" type [disabled]="userEmail">
+                              </mat-form-field>
+                            </td>
+                          </ng-container>
+
+                          <!-- date Column -->
+                          <ng-container matColumnDef="date">
+                            <th mat-header-cell *matHeaderCellDef> Date </th>
+                            <td mat-cell *matCellDef="let element; let colIndex = index;">
+                              <div class="columnsDefLabel">
+                                <mat-form-field class="scheduleRowDP">
+                                  <input matInput disabled [matDatepicker]="cpdDatePicker" placeholder [(ngModel)]="element.Date">
+                                  <mat-datepicker-toggle matSuffix [for]="cpdDatePicker"></mat-datepicker-toggle>
+                                  <mat-datepicker #cpdDatePicker [disabled]="userEmail"></mat-datepicker>
+                                </mat-form-field>
+                              </div>
+                            </td>
+                          </ng-container>
+
+                          <!-- subjectsCovered Column -->
+                          <ng-container matColumnDef="subjectsCovered">
+                            <th mat-header-cell *matHeaderCellDef> Subjects Covered </th>
+                            <td mat-cell *matCellDef="let element">
+                              <mat-form-field class="scheduleRowDP">
+                                <input matInput placeholder [(ngModel)]="element[&apos;Subjects covered&apos;]" type [disabled]="userEmail">
+                              </mat-form-field>
+                            </td>
+                          </ng-container>
+
+                          <!-- hoursOfCPE Column -->
+                          <ng-container matColumnDef="hoursOfCPE">
+                            <th mat-header-cell *matHeaderCellDef> Hours of CPE </th>
+                            <td mat-cell *matCellDef="let element">
+                              <mat-form-field class="scheduleRowDP">
+                                <input matInput placeholder min="0" [(ngModel)]="element[&apos;Hours of CPE&apos;]" type="number" [disabled]="userEmail">
+                              </mat-form-field>
+                            </td>
+                          </ng-container>
+
+                          <!-- specialism Column -->
+                          <ng-container matColumnDef="specialism">
+                            <th mat-header-cell *matHeaderCellDef> Specialism <br>(Audit, tax, etc ) </th>
+                            <td mat-cell *matCellDef="let element">
+                              <mat-form-field class="scheduleRowDP">
+                                <input matInput placeholder [(ngModel)]="element[&apos;Specialism(Audit, tax, etc)&apos;]" type [disabled]="userEmail">
+                              </mat-form-field>
+                            </td>
+                          </ng-container>
+
+                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                          <tr mat-row *matRowDef="let row; columns: displayedColumns; "></tr>
+                        </table>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div fxLayout="row wrap" class="mt-10 mb-10" fxLayoutAlign="end center" [fxShow]="true" [fxHide]="false"><button mat-raised-button matStepperPrevious>Back</button><button mat-raised-button class="ml-10" matStepperNext color="primary">Next</button></div>
+          </div>
+        </mat-step>
+        <mat-step label="General Information">
+          <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+            <div fxLayout="column wrap" class="borderstepperView paddingView" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+              <h4 style="text-transform: capitalize" class="mt-10 paddingSpace mb-0">
+                File upload:
+
+              </h4>
+              <div fxLayout="column wrap" class="mr-10 designInput" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                <div style="flex-direction: column;" class="mb-10">
+                  <label class="font11">
+                    The following documents/schedules may be uploaded:
+                    <br>
+                    1) CPD records. <br>
+                    2) Fee dependency schedules. <br>
+                    3) List of directorships/trusteeships. <br>
+                    4) List of private professional work. <br>
+                  </label>
+                  <br>
+
+                  <div class="fileUploadDiv width-100 mb-10" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <!-- <label for="dofaFileUpload" class="helpText">Select</label> -->
+                    <input id="generalInfoFileInput" type="file" hidden multiple accept=".pdf, .jpg, .png, .xlsx, .xls, .doc, .docx" (change)="getFileDetails($event)" [disabled]="userInfo.userRole == &apos;admin&apos;">
+                  </div>
+                  <div class="fileUploadDiv width-100 mb-10" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <label for="generalInfoFileInput" class="fileUploadLabel width-70 font-12">{{uploadFilesSel || &apos;Click here to upload file(s)&apos;}}</label>
+                    <button mat-button class="fileUploadBTN primaryBTN" [disabled]="userInfo.userRole == &apos;admin&apos;" (click)="uploadAFile()">
+                      <mat-icon>cloud_upload</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div fxLayout="row wrap" fxLayoutGap="20px" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+                <div fxLayout="column wrap" class="pb-0 borderRadius mt-20 p-10 borderData" fxFlex="48" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let genInfo of scheduleOutput[&apos;generalInfo&apos;]; let i = index;">
+                  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+                    <p class="mt-10 mb-10 font11">
+                      {{genInfo.name}}
+                    </p>
+                    <div fxLayout="row wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+                      <mat-icon class="cursorHand" (click)="viewDocument(genInfo, i)" color="primary">visibility</mat-icon>
+                      <mat-icon class="ml-10 cursorHand" (click)="deleteDocument(genInfo, i)" *ngIf="userInfo.userRole !== &apos;admin&apos;" color="warn">delete</mat-icon>
+                    </div>
+                  </div>
+                  <mat-form-field>
+                    <textarea matInput [(ngModel)]="genInfo.comments" rows="5" placeholder="Enter comments" [required]="false"></textarea>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div fxLayout="row wrap" class="mt-10 mb-10" fxLayoutAlign="end center" [fxShow]="true" [fxHide]="false"><button mat-raised-button matStepperPrevious>Back</button><button mat-raised-button class="ml-10" matStepperNext color="primary">Next</button></div>
+          </div>
+        </mat-step>
+        <mat-step label="Declaration">
+          <div fxLayout="column " fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="policyResponse?.stepper?.declaration">
+            <div fxLayout="column wrap" class="paddingView borderstepperView" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+              <div fxLayout="column " fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let declare of Object.keys(policyResponse[&apos;stepper&apos;][&apos;declaration&apos;])">
+                <h4 style="text-transform: capitalize" class="paddingSpace mb-0">
+                  {{declare}}: *
+
+                </h4>
+                <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="declare == &apos;confidentiality&apos;">
+                  <div class="paddingSpace font11">
+                    {{policyResponse.stepper.declaration[declare].question}}
+
+                  </div>
+                  <mat-radio-group [(ngModel)]="scheduleOutput[&apos;declaration&apos;][declare]" [required]="false">
+                    <mat-radio-button class="mr-10" [required]="true" value="{{radio}}" *ngFor="let radio of policyResponse.stepper.declaration[declare].value" [disabled]="(userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)">{{radio}}</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+                <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="declare == &apos;signoff&apos;">
+                  <div fxLayout="column wrap" class="declareSignOffClass" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let declareSign of policyResponse.stepper.declaration[declare]; let declareSignI = index;">
+                    <div fxLayout="column wrap" class="declareSignOffClassInner" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="(declareSign.fillBy &amp;&amp; declareSign.fillBy.indexOf(userInfo.userRole) &gt;= 0) || userInfo.ethicsLeader">
+                      <div class="paddingSpace font11">
+                        {{declareSign.question}}
+
+                      </div>
+                      <div fxLayout="row wrap" class="signOffQuestions-{{declareSignI}}" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+                        <div fxLayout="column wrap" class="signOffQuestionInner-{{column.type}}" fxFlex="49" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngFor="let column of declareSign.columnsDef; let i = index;">
+                          <div fxLayout="column wrap" class="designInput" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="column.type == &apos;freeForm&apos; &amp;&amp; declareSign.fillBy.indexOf(&apos;director&apos;) &lt;0">
+                            <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+                              <input matInput [(ngModel)]="scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] ? scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] : scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] = userInfo.displayName" placeholder="Enter {{column.name}}" [required]="true" [disabled]="true || (userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)">
+                              <mat-error *ngIf="!scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] || scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] == &apos; &apos;">Please enter valid data</mat-error>
+                            </mat-form-field>
+                          </div>
+                          <div fxLayout="column wrap" class="textAreaDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="column.type == &apos;textArea&apos;">
+                            <mat-form-field class="font11 designTextarea">
+                              <textarea matInput [(ngModel)]="scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name]" rows="5" placeholder="Enter {{column.name}}" [required]="true" [disabled]="!userInfo.ethicsLeader"></textarea>
+                            </mat-form-field>
+                          </div>
+                          <div fxLayout="column wrap" class="designInput" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="column.type == &apos;datePicker&apos;">
+                            <mat-form-field style="pointer-events: none" [appearance]="&apos;legacy&apos;">
+                              <input matInput placeholder="Enter {{column.name}}" [matDatepicker]="picker" [(ngModel)]="scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] ? scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] : scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] = curDate" [required]="true" [disabled]="false" readonly>
+                              <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+                              <mat-datepicker #picker [disabled]="true ||  (userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)"></mat-datepicker>
+
+                            </mat-form-field>
+                          </div>
+                          <div fxLayout="column wrap" class="designInput" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="column.type == &apos;freeForm&apos; &amp;&amp; declareSign.fillBy.indexOf(&apos;director&apos;) &gt;=0">
+                            <mat-form-field [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+                              <input matInput [(ngModel)]="scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] = directorName" placeholder="Enter {{column.name}}" [required]="true" [disabled]="true || (userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;)">
+                              <mat-error *ngIf="!scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] || scheduleOutput[&apos;declaration&apos;][declare][declareSignI][column.name] == &apos; &apos;">Please enter valid data</mat-error>
+                            </mat-form-field>
+                          </div>
+                          <div fxLayout="column wrap" class="designInput" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="column.type == &apos;fileUpload&apos;">
+                            <n-file-upload></n-file-upload>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div fxLayout="row wrap" class="mt-10 mb-10" fxLayoutAlign="end center" [fxShow]="true" [fxHide]="false"><button mat-raised-button matStepperPrevious>Back</button><button mat-raised-button class="ml-10 successBTN" (click)="saveData()" [disabled]="userInfo.userRole == &apos;admin&apos; || queryParams.mode == &apos;edit&apos;">Save</button></div>
+          </div>
+        </mat-step>
+      </mat-horizontal-stepper>
+    </div>
+  </div>
+</div>
+<div>
+  <div class="downloadDivPDF" id="downloadDivPDF"></div>
+</div>

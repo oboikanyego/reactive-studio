@@ -1,0 +1,11 @@
+<div fxLayout="column wrap" class="headerTitle" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <h2>
+    {{metaData[this.data].title}}
+  </h2>
+  <div>
+    <a class="breadcrumLink" [ngClass]="{&apos;active&apos; : breadcrum.active}" routerLink="{{breadcrum.link}}" *ngFor="let breadcrum of metaData[this.data].breadcrum; let i = index;">
+      {{breadcrum.title}}
+      <span *ngIf="i &gt;= 0 &amp;&amp; i !== (metaData[this.data].breadcrum.length - 1)" style="margin-left: 5px"> &gt; </span>
+    </a>
+  </div>
+</div>

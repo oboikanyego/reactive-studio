@@ -1,0 +1,86 @@
+<div fxLayout="column " class="mainContainer" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+  <div fxLayout="row wrap" fxLayoutAlign="space-between center" [fxShow]="true" [fxHide]="false">
+    <div>
+      <bh-pageheader [data]="&apos;users&apos;"></bh-pageheader>
+    </div>
+    <div fxLayout="row wrap" class="designInput" fxLayoutAlign="start center" [fxShow]="true" [fxHide]="false">
+      <mat-form-field class="mr-10 searchTable" [appearance]="&apos;legacy&apos;" [floatLabel]="&apos;auto&apos;" [hideRequiredMarker]="false">
+        <input matInput [(ngModel)]="tableSearch" placeholder="Search Users" [required]="false" (keyup)="searchUsers($event)">
+        <mat-icon matSuffix (click)="searchUsers($event)">search</mat-icon>
+      </mat-form-field>
+      <mat-icon style="cursor: pointer" class="mr-10 downloadBTN" (click)="download()" matTooltip="Download Report" color="primary">cloud_download</mat-icon><label>
+        <!--<button mat-raised-button for="usersUpload" class="successBTN" type="file" (change)="changeListener($event)" accept=".csv">
+    <mat-icon>cloud_upload</mat-icon>
+    <input type="file" class="upload" id="usersUpload" (change)="changeListener($event)"
+     accept=".csv" style="display: none;">
+</button>-->
+
+        <input type="file" name="file" id="file" class="inputfile" (change)="changeListener($event)" accept=".csv">
+        <label for="file" matTooltip="Upload CSV">
+          <mat-icon>cloud_upload</mat-icon>
+        </label>
+
+        <!-- <input type="file" mat-raised-button class="upload" (change)="changeListener($event)" accept=".csv" style="visibilty: none">  -->
+      </label>
+      <mat-icon class="downloadBTN ml-10" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+      <mat-menu #menu="matMenu"><button mat-menu-item (click)="addUsers()"> Add user </button><button mat-menu-item (click)="getUsersList()"> Refresh list </button><button mat-menu-item (click)="changeRole()"> Change role </button><button mat-menu-item (click)="activeUsers()"> Activate users </button><button mat-menu-item (click)="deactiveUsers()"> Deactivate users </button><button mat-menu-item (click)="deleteFUsers()"> Delete forever </button><button mat-menu-item (click)="changeDepartment()"> Department </button></mat-menu>
+    </div>
+  </div>
+  <div fxLayout="column wrap" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false">
+    <div fxLayout="row wrap" class="userBTNsDiv" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false"><button mat-button *ngFor="let key of Object.keys(getPayload)" [ngClass]="{&apos;activeSubBTN&apos;: curSelected == key}" (click)="getUsersList(key)">{{listBTN[key] }} ( {{countObj[key]}} )</button></div>
+    <div fxLayout="column wrap" fxLayoutAlign="center center" [fxShow]="true" [fxHide]="false" *ngIf="!dataSource || dataSource.data.length &lt;= 0">
+      <mat-progress-spinner [mode]="&apos;indeterminate&apos;" color="primary" strokeWidth="6" [diameter]="120"></mat-progress-spinner>
+    </div>
+    <div fxLayout="column wrap" class="tableScrollWrapper" fxLayoutAlign="start stretch" [fxShow]="true" [fxHide]="false" *ngIf="dataSource &amp;&amp; dataSource.data.length &gt; 0">
+      <div class="width_100">
+        <table mat-table [dataSource]="dataSource" id="downloadTable" matSort class="width_100">
+          <tr mat-header-row *matHeaderRowDef="displayColumns; sticky: true;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayColumns;"> </tr>
+
+          <ng-container matColumnDef="checkbox">
+            <th mat-header-cell *matHeaderCellDef>
+              Selected: {{Object.keys(ngModelObj[&apos;selectedUsers&apos;]).length}}
+            </th>
+            <td mat-cell *matCellDef="let table; let i = index;">
+              <mat-checkbox class="mr-10" [(ngModel)]="ngModelObj[&apos;selectedUsers&apos;][table[&apos;email&apos;]]" color="primary" [required]="false"></mat-checkbox>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="firstName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
+            <td mat-cell *matCellDef="let table; let i = index;">{{table.firstName}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="lastName">
+            <th mat-header-cell *matHeaderCellDef>Last Name</th>
+            <td mat-cell *matCellDef="let table; let i = index;">{{table.lastName}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef>Role</th>
+            <td mat-cell *matCellDef="let table; let i = index;">{{table.userRole}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>EMail ID</th>
+            <td mat-cell *matCellDef="let table; let i = index;">{{table.email}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="mobile">
+            <th mat-header-cell *matHeaderCellDef>Contact No.</th>
+            <td mat-cell *matCellDef="let table; let i = index;">{{table.mobile}}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let table; let i = index;">
+              <mat-icon class="actionBTN" matTooltip="Activate User" *ngIf="curSelected == &apos;deleted&apos;" (click)="activateUser(table)" color="primary">check_circle</mat-icon>
+              <mat-icon class="actionBTN" matTooltip="Edit User" (click)="editUsers(table)" *ngIf="curSelected !== &apos;deleted&apos;">edit</mat-icon>
+              <mat-icon class="actionBTN" matTooltip="Delete User" (click)="deleteUsers(table)" *ngIf="curSelected !== &apos;deleted&apos;">delete</mat-icon>
+            </td>
+          </ng-container>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
